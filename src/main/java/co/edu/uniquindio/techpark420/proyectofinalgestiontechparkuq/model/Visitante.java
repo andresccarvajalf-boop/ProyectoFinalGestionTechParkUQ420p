@@ -17,8 +17,7 @@ public class Visitante {
     private List<HistorialVisita> historialVisitas;
     private List<Notificacion> notificaciones;
 
-    public Visitante(String id, String nombre, String documento, int edad,
-                      double estatura, double saldoVirtual, String fotoPerfil) {
+    public Visitante(String id, String nombre, String documento, int edad, double estatura, double saldoVirtual, String fotoPerfil) {
 
         this.id = id;
         this.nombre = nombre;
