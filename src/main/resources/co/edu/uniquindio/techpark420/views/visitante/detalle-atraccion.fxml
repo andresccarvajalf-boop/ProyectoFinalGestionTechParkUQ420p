@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Circle?>
+
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.visitante.DetalleAtraccionController"
+           styleClass="root-pane"
+           stylesheets="@../../styles/main.css">
+
+    <VBox spacing="24" maxWidth="520" alignment="CENTER">
+        <padding>
+            <Insets top="40" right="40" bottom="40" left="40"/>
+        </padding>
+
+        <!-- Encabezado: botón volver + nombre -->
+        <HBox alignment="CENTER_LEFT" spacing="12">
+            <Button text="← Volver" onAction="#volverAlDashboard" styleClass="ghost-button"/>
+            <Label fx:id="lblNombreAtraccion" styleClass="page-title"/>
+        </HBox>
+
+        <!-- Tarjeta principal -->
+        <VBox styleClass="card" spacing="16">
+            <padding>
+                <Insets top="24" right="24" bottom="24" left="24"/>
+            </padding>
+
+            <!-- Tipo -->
+            <VBox spacing="4">
+                <Label text="Tipo" styleClass="field-label"/>
+                <Label fx:id="lblTipo" styleClass="info-text"/>
+            </VBox>
+
+            <!-- Zona + Estado -->
+            <HBox spacing="16">
+                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                    <Label text="Zona" styleClass="field-label"/>
+                    <Label fx:id="lblZona" styleClass="info-text"/>
+                </VBox>
+                <VBox spacing="4" alignment="CENTER_LEFT">
+                    <Label text="Estado" styleClass="field-label"/>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Circle fx:id="circuloEstado" radius="7"/>
+                        <Label fx:id="lblEstado" styleClass="info-text"/>
+                    </HBox>
+                </VBox>
+            </HBox>
+
+            <!-- Motivo de cierre (oculto por defecto) -->
+            <Label fx:id="lblMotivoCierre" styleClass="warning-label"
+                   visible="false" managed="false" wrapText="true"/>
+
+            <Separator/>
+
+            <!-- Restricciones -->
+            <Label text="Restricciones" styleClass="section-title"/>
+            <HBox spacing="24">
+                <VBox spacing="4">
+                    <Label text="Altura mínima" styleClass="field-label"/>
+                    <Label fx:id="lblAlturaMinima" styleClass="info-text"/>
+                </VBox>
+                <VBox spacing="4">
+                    <Label text="Edad mínima" styleClass="field-label"/>
+                    <Label fx:id="lblEdadMinima" styleClass="info-text"/>
+                </VBox>
+                <VBox spacing="4">
+                    <Label text="Capacidad" styleClass="field-label"/>
+                    <Label fx:id="lblCapacidad" styleClass="info-text"/>
+                </VBox>
+            </HBox>
+
+            <VBox spacing="4">
+                <Label text="Costo adicional" styleClass="field-label"/>
+                <Label fx:id="lblCostoAdicional" styleClass="info-text"/>
+            </VBox>
+
+            <Separator/>
+
+            <!-- Cola virtual -->
+            <Label text="Cola virtual" styleClass="section-title"/>
+            <HBox spacing="16" alignment="CENTER_LEFT">
+                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                    <Label text="Tiempo de espera estimado" styleClass="field-label"/>
+                    <Label fx:id="lblTiempoEspera" styleClass="card-value"/>
+                </VBox>
+                <VBox spacing="4">
+                    <Label text="En cola ahora" styleClass="field-label"/>
+                    <Label fx:id="lblPersonasEnCola" styleClass="info-text"/>
+                </VBox>
+            </HBox>
+
+            <VBox spacing="4">
+                <Label text="Ocupación" styleClass="field-label"/>
+                <ProgressBar fx:id="barraOcupacion" maxWidth="Infinity" progress="0"/>
+            </VBox>
+
+            <Label fx:id="lblFastPassDisponible" styleClass="info-text"/>
+
+            <Separator/>
+
+            <!-- Mensaje de acceso -->
+            <Label fx:id="lblMensajeAcceso" styleClass="info-text" wrapText="true"/>
+        </VBox>
+
+        <!-- Botones de acción -->
+        <HBox spacing="12">
+            <Button fx:id="btnUnirseACola" text="Unirse a la Cola"
+                    onAction="#unirseACola"
+                    HBox.hgrow="ALWAYS" maxWidth="Infinity"
+                    styleClass="primary-button"/>
+            <Button fx:id="btnAgregarFavorita" text="☆ Agregar a favoritas"
+                    onAction="#toggleFavorita"
+                    styleClass="secondary-button"/>
+        </HBox>
+
+    </VBox>
+</StackPane>
