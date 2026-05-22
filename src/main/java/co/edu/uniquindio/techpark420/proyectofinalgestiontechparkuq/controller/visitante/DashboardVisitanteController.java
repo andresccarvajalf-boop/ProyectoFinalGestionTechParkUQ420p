@@ -1,0 +1,134 @@
+package co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.visitante;
+
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+
+import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.base.BaseController;
+import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases.Atraccion;
+import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases.Visitante;
+import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases.Zona;
+import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.enums.EstadoAtraccion;
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
+import javafx.scene.input.MouseEvent;
+
+public class DashboardVisitanteController extends BaseController implements Initializable {
+
+    // ── FXML — nombres exactos del dashboard-visitante.fxml ─────────────────
+    @FXML private Label nombreVisitanteLabel;
+    @FXML private Label saldoLabel;
+    @FXML private Label saldoCardLabel;
+    @FXML private Label notifBadgeLabel;
+    @FXML private TreeView<String> mapaTreeView;
+    @FXML private ListView<String> favoritasListView;
+
+    private Visitante visitante;
+
+    // ────────────────────────────────────────────────────────────────────────
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        visitante = appContext.getVisitanteEnSesion();
+        if (visitante == null) {
+            navegarA(VISTA_LOGIN);
+            return;
+        }
+        cargarDatos();
+    }
+
+    private void cargarDatos() {
+        nombreVisitanteLabel.setText(visitante.getNombre());
+
+        String saldo = String.format("💰 $%.0f", visitante.getSaldoVirtual());
+        saldoLabel.setText(saldo);
+        saldoCardLabel.setText(saldo);
+
+        long noLeidas = visitante.listarNotificaciones()
+                .stream().filter(n -> !n.isLeida()).count();
+        notifBadgeLabel.setText(String.valueOf(noLeidas));
+
+        cargarMapa();
+        cargarFavoritas();
+    }
+
+    private void cargarMapa() {
+        TreeItem<String> raiz = new TreeItem<>(parque.getNombre());
+        raiz.setExpanded(true);
+        for (Zona zona : parque.getZonas()) {
+            TreeItem<String> nodoZona = new TreeItem<>("📍 " + zona.getNombre());
+            for (Atraccion a : zona.getAtracciones()) {
+                String icono = a.getEstado() == EstadoAtraccion.ACTIVA ? "✅" : "❌";
+                nodoZona.getChildren().add(new TreeItem<>(icono + " " + a.getNombre()));
+            }
+            raiz.getChildren().add(nodoZona);
+        }
+        mapaTreeView.setRoot(raiz);
+    }
+
+    private void cargarFavoritas() {
+        List<String> nombres = visitante.getAtraccionesFavoritas()
+                .stream().map(Atraccion::getNombre).collect(Collectors.toList());
+        favoritasListView.setItems(FXCollections.observableArrayList(nombres));
+    }
+
+    // ── Acciones — nombres exactos referenciados en el FXML ─────────────────
+
+    @FXML
+    private void irAInicio() {
+        cargarDatos(); // refrescar la vista actual
+    }
+
+    @FXML
+    private void irACompraTicket() {
+        navegarA(VISTA_COMPRA_TICKET);
+    }
+
+    @FXML
+    private void irAFavoritas() {
+        cargarFavoritas();
+    }
+
+    @FXML
+    private void irANotificaciones() {
+        navegarA(VISTA_NOTIFICACIONES);
+    }
+
+    @FXML
+    private void cerrarSesion() {
+        appContext.cerrarSesion();
+        navegarA(VISTA_LOGIN);
+    }
+
+    @FXML
+    private void handleAtraccionSeleccionada(MouseEvent event) {
+        if (event.getClickCount() == 2) {
+            verDetalleAtraccion();
+        }
+    }
+
+    @FXML
+    private void verDetalleAtraccion() {
+        // Buscar la atracción seleccionada en el TreeView por nombre
+        TreeItem<String> seleccionado = mapaTreeView.getSelectionModel().getSelectedItem();
+        if (seleccionado == null || seleccionado.getParent() == null
+                || seleccionado.getParent().getValue() == null
+                || seleccionado.getParent().getValue().equals(parque.getNombre())) {
+            mostrarAlerta("Sin selección", "Selecciona una atracción del mapa.");
+            return;
+        }
+        // Extraer nombre limpio (sin emoji)
+        String nombreLimpio = seleccionado.getValue()
+                .replace("✅ ", "").replace("❌ ", "");
+        Atraccion encontrada = parque.buscarAtraccion(nombreLimpio);
+        if (encontrada != null) {
+            appContext.setAtraccionSeleccionada(encontrada);
+            navegarA(VISTA_DETALLE_ATRACCION);
+        }
+    }
+}
