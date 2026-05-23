@@ -1,8 +1,9 @@
 package co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.abstractas;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public abstract class Empleado {
+public abstract class Empleado implements Serializable {
 
     private String id;
     private String nombre;
@@ -34,7 +35,7 @@ public abstract class Empleado {
     }
 
     public void actualizarDatos() {
-        // actualización de datos del empleado
+
     }
 
     public String mostrarInformacion() {

@@ -1,10 +1,16 @@
 package co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.visitante;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.app.AppContext;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.base.BaseController;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases.Atraccion;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases.Visitante;
@@ -17,21 +23,25 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
 
 public class DashboardVisitanteController extends BaseController implements Initializable {
 
-    // ── FXML — nombres exactos del dashboard-visitante.fxml ─────────────────
+
     @FXML private Label nombreVisitanteLabel;
     @FXML private Label saldoLabel;
     @FXML private Label saldoCardLabel;
     @FXML private Label notifBadgeLabel;
     @FXML private TreeView<String> mapaTreeView;
     @FXML private ListView<String> favoritasListView;
+    @FXML private ImageView imgPerfil;          // ← NUEVO
 
     private Visitante visitante;
 
-    // ────────────────────────────────────────────────────────────────────────
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         visitante = appContext.getVisitanteEnSesion();
@@ -55,7 +65,68 @@ public class DashboardVisitanteController extends BaseController implements Init
 
         cargarMapa();
         cargarFavoritas();
+        cargarFotoPerfil();   // ← NUEVO
     }
+
+
+
+    /**
+     * Muestra la foto guardada del visitante, o la imagen por defecto (1.png)
+     * si todavía no tiene foto asignada o si el archivo fue movido/eliminado.
+     */
+    private void cargarFotoPerfil() {
+        if (imgPerfil == null) return;
+
+        String ruta = visitante.getFotoPerfil();
+        Image imagen;
+
+        if (ruta != null && new File(ruta).exists()) {
+            imagen = new Image(new File(ruta).toURI().toString());
+        } else {
+
+            imagen = new Image(getClass().getResourceAsStream(
+                "/co/edu/uniquindio/techpark420/proyectofinalgestiontechparkuq/imgs/1.png"
+            ));
+        }
+        imgPerfil.setImage(imagen);
+    }
+
+    /**
+     * Abre un FileChooser para que el visitante seleccione su foto de perfil.
+     * Copia el archivo a la carpeta "fotos/" y persiste la ruta en el modelo.
+     */
+    @FXML
+    private void subirFoto() {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Seleccionar foto de perfil");
+        chooser.getExtensionFilters().add(
+            new FileChooser.ExtensionFilter("Imágenes", "*.png", "*.jpg", "*.jpeg")
+        );
+
+        File archivo = chooser.showOpenDialog(nombreVisitanteLabel.getScene().getWindow());
+        if (archivo == null) return;   // el usuario canceló
+
+        try {
+            new File("fotos").mkdirs();
+
+
+            String ext = archivo.getName().substring(archivo.getName().lastIndexOf('.'));
+            String destino = "fotos/" + visitante.getDocumento() + ext;
+
+            Files.copy(archivo.toPath(), Path.of(destino), StandardCopyOption.REPLACE_EXISTING);
+
+            visitante.setFotoPerfil(destino);
+            AppContext.getInstance().guardarDatos();
+            cargarFotoPerfil();
+
+            mostrarAlerta("Foto actualizada", "Tu foto de perfil fue guardada correctamente.");
+
+        } catch (IOException e) {
+            mostrarError("No se pudo guardar la foto: " + e.getMessage());
+        }
+    }
+
+
 
     private void cargarMapa() {
         TreeItem<String> raiz = new TreeItem<>(parque.getNombre());
@@ -77,27 +148,39 @@ public class DashboardVisitanteController extends BaseController implements Init
         favoritasListView.setItems(FXCollections.observableArrayList(nombres));
     }
 
-    // ── Acciones — nombres exactos referenciados en el FXML ─────────────────
+
 
     @FXML
-    private void irAInicio() {
-        cargarDatos(); // refrescar la vista actual
+    private void irARecargarSaldo() {
+        javafx.scene.control.TextInputDialog dialogo =
+                new javafx.scene.control.TextInputDialog("10000");
+        dialogo.setTitle("Recargar Saldo");
+        dialogo.setHeaderText("Recarga de saldo virtual");
+        dialogo.setContentText("Ingresa el monto a recargar ($):");
+
+        dialogo.showAndWait().ifPresent(valor -> {
+            try {
+                double monto = Double.parseDouble(valor.trim());
+                if (monto <= 0) {
+                    mostrarAlerta("Valor inválido", "El monto debe ser mayor a 0.");
+                    return;
+                }
+                visitante.recargarSaldo(monto);
+                AppContext.getInstance().guardarDatos();
+                cargarDatos();
+                mostrarAlerta("Recarga exitosa",
+                        String.format("Se recargaron $%.0f.\nSaldo actual: $%.0f",
+                                monto, visitante.getSaldoVirtual()));
+            } catch (NumberFormatException e) {
+                mostrarAlerta("Valor inválido", "Ingresa un número válido.");
+            }
+        });
     }
 
-    @FXML
-    private void irACompraTicket() {
-        navegarA(VISTA_COMPRA_TICKET);
-    }
-
-    @FXML
-    private void irAFavoritas() {
-        cargarFavoritas();
-    }
-
-    @FXML
-    private void irANotificaciones() {
-        navegarA(VISTA_NOTIFICACIONES);
-    }
+    @FXML private void irAInicio()          { cargarDatos(); }
+    @FXML private void irACompraTicket()    { navegarA(VISTA_COMPRA_TICKET); }
+    @FXML private void irAFavoritas()       { cargarFavoritas(); }
+    @FXML private void irANotificaciones()  { navegarA(VISTA_NOTIFICACIONES); }
 
     @FXML
     private void cerrarSesion() {
@@ -107,14 +190,11 @@ public class DashboardVisitanteController extends BaseController implements Init
 
     @FXML
     private void handleAtraccionSeleccionada(MouseEvent event) {
-        if (event.getClickCount() == 2) {
-            verDetalleAtraccion();
-        }
+        if (event.getClickCount() == 2) verDetalleAtraccion();
     }
 
     @FXML
     private void verDetalleAtraccion() {
-        // Buscar la atracción seleccionada en el TreeView por nombre
         TreeItem<String> seleccionado = mapaTreeView.getSelectionModel().getSelectedItem();
         if (seleccionado == null || seleccionado.getParent() == null
                 || seleccionado.getParent().getValue() == null
@@ -122,7 +202,6 @@ public class DashboardVisitanteController extends BaseController implements Init
             mostrarAlerta("Sin selección", "Selecciona una atracción del mapa.");
             return;
         }
-        // Extraer nombre limpio (sin emoji)
         String nombreLimpio = seleccionado.getValue()
                 .replace("✅ ", "").replace("❌ ", "");
         Atraccion encontrada = parque.buscarAtraccion(nombreLimpio);

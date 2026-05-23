@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.UUID;
 
+import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.app.AppContext;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.base.BaseController;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.abstractas.Ticket;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases.TicketFamiliar;
@@ -26,26 +27,20 @@ import javafx.scene.layout.VBox;
 
 public class CompraTicketController extends BaseController implements Initializable {
 
-    // ── Selección de tipo ────────────────────────────────────────────────────
     @FXML private ChoiceBox<String> choiceTipoTicket;
 
-    // ── Panel de resumen dinámico ────────────────────────────────────────────
     @FXML private Label lblDescripcionTicket;
     @FXML private Label lblPrecioTicket;
     @FXML private Label lblSaldoActual;
 
-    // ── Campos para Familiar ─────────────────────────────────────────────────
     @FXML private VBox panelFamiliar;
     @FXML private VBox panelAcompanantes;
     @FXML private Spinner<Integer> spinnerPersonas;
 
-    // ── Estado interno ───────────────────────────────────────────────────────
     private Visitante visitante;
 
-    // Cada fila de acompañante guarda sus 4 campos: nombre, edad, estatura, documento
     private final List<TextField[]> camposAcompanantes = new ArrayList<>();
 
-    // ────────────────────────────────────────────────────────────────────────
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         visitante = appContext.getVisitanteEnSesion();
@@ -63,11 +58,10 @@ public class CompraTicketController extends BaseController implements Initializa
         choiceTipoTicket.getSelectionModel().selectedItemProperty()
                 .addListener((obs, old, nuevo) -> actualizarDetalle(nuevo));
 
-        // Actualizar formulario cuando cambia el spinner con teclado también
         spinnerPersonas.valueProperty().addListener((obs, old, nuevo) -> {
             if ("FAMILIAR".equals(choiceTipoTicket.getValue())) {
                 actualizarPrecioFamiliar();
-                regenerarFormularioAcompanantes(nuevo - 1); // -1 porque el titular no cuenta
+                regenerarFormularioAcompanantes(nuevo - 1);
             }
         });
 
@@ -75,7 +69,6 @@ public class CompraTicketController extends BaseController implements Initializa
                 String.format("Saldo disponible: $%.0f", visitante.getSaldoVirtual()));
     }
 
-    // ── Actualiza la UI según el tipo elegido ────────────────────────────────
     private void actualizarDetalle(String tipo) {
         boolean esFamiliar = "FAMILIAR".equals(tipo);
         panelFamiliar.setVisible(esFamiliar);
@@ -115,12 +108,6 @@ public class CompraTicketController extends BaseController implements Initializa
                 total, descuento * 100, personas));
     }
 
-    /**
-     * Genera dinámicamente un formulario por cada acompañante (titular excluido).
-     * Cada bloque incluye: documento, nombre, edad y estatura.
-     *
-     * @param cantidad número de acompañantes = totalPersonas - 1
-     */
     private void regenerarFormularioAcompanantes(int cantidad) {
         panelAcompanantes.getChildren().clear();
         camposAcompanantes.clear();
@@ -128,11 +115,9 @@ public class CompraTicketController extends BaseController implements Initializa
         for (int i = 0; i < cantidad; i++) {
             int numero = i + 1;
 
-            // Título del acompañante
             Label titulo = new Label("Acompañante " + numero);
             titulo.setStyle("-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #444;");
 
-            // Campos
             TextField txtDocumento = new TextField();
             TextField txtNombre    = new TextField();
             TextField txtEdad      = new TextField();
@@ -143,7 +128,6 @@ public class CompraTicketController extends BaseController implements Initializa
             txtEdad.setPromptText("Edad (años)");
             txtEstatura.setPromptText("Estatura (ej: 1.70)");
 
-            // Fila de edad + estatura en horizontal
             HBox fila = new HBox(12, txtEdad, txtEstatura);
             txtEdad.setMaxWidth(Double.MAX_VALUE);
             txtEstatura.setMaxWidth(Double.MAX_VALUE);
@@ -156,13 +140,10 @@ public class CompraTicketController extends BaseController implements Initializa
                             "-fx-border-color: #ddd; -fx-border-radius: 6;");
 
             panelAcompanantes.getChildren().add(bloque);
-
-            // Orden del array: [0] nombre, [1] edad, [2] estatura, [3] documento
             camposAcompanantes.add(new TextField[]{txtNombre, txtEdad, txtEstatura, txtDocumento});
         }
     }
 
-    // ── Spinner con mouse ────────────────────────────────────────────────────
     @FXML
     private void onPersonasCambian() {
         if ("FAMILIAR".equals(choiceTipoTicket.getValue())) {
@@ -171,7 +152,6 @@ public class CompraTicketController extends BaseController implements Initializa
         }
     }
 
-    // ── Confirmar compra ─────────────────────────────────────────────────────
     @FXML
     private void confirmarCompra() {
         if (visitante.getTicketActivo() != null && visitante.getTicketActivo().isActivo()) {
@@ -204,6 +184,7 @@ public class CompraTicketController extends BaseController implements Initializa
         }
 
         visitante.comprarTicket(nuevoTicket);
+        AppContext.getInstance().guardarDatos(); // ← PERSISTENCIA
 
         mostrarAlerta("¡Compra exitosa!",
                 "Ticket " + tipoSeleccionado + " adquirido correctamente.\n" +
@@ -212,7 +193,6 @@ public class CompraTicketController extends BaseController implements Initializa
         volverAlDashboard();
     }
 
-    // ── Construcción del ticket ──────────────────────────────────────────────
     private Ticket construirTicket(String tipo) {
         String id = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
 
@@ -232,14 +212,13 @@ public class CompraTicketController extends BaseController implements Initializa
                     yield null;
                 }
 
-                // Validar y leer campos de acompañantes
                 List<Visitante> acompanantes = new ArrayList<>();
                 for (int i = 0; i < camposAcompanantes.size(); i++) {
-                    TextField[] campos   = camposAcompanantes.get(i);
-                    String nombre        = campos[0].getText().trim();
-                    String edadStr       = campos[1].getText().trim();
-                    String estStr        = campos[2].getText().trim();
-                    String documento     = campos[3].getText().trim();
+                    TextField[] campos = camposAcompanantes.get(i);
+                    String nombre      = campos[0].getText().trim();
+                    String edadStr     = campos[1].getText().trim();
+                    String estStr      = campos[2].getText().trim();
+                    String documento   = campos[3].getText().trim();
 
                     if (nombre.isEmpty() || edadStr.isEmpty() || estStr.isEmpty() || documento.isEmpty()) {
                         mostrarAlerta("Datos incompletos",
@@ -266,9 +245,7 @@ public class CompraTicketController extends BaseController implements Initializa
                         yield null;
                     }
 
-                    acompanantes.add(new Visitante(
-                            documento,
-                            nombre, "", edadAcomp, estaturaAcomp));
+                    acompanantes.add(new Visitante(documento, nombre, "", edadAcomp, estaturaAcomp));
                 }
 
                 TicketFamiliar tf = new TicketFamiliar();
@@ -291,7 +268,6 @@ public class CompraTicketController extends BaseController implements Initializa
         };
     }
 
-    // ── Navegación ───────────────────────────────────────────────────────────
     @FXML
     private void volverAlDashboard() {
         navegarA("/co/edu/uniquindio/techpark420/proyectofinalgestiontechparkuq/views/visitante/dashboard-visitante.fxml");

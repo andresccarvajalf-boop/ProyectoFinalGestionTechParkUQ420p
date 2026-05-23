@@ -36,8 +36,8 @@ public class NotificacionesController extends BaseController implements Initiali
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Al entrar a notificaciones ya no estamos en detalle-atraccion,
-        // así que el popup de turno no debe dispararse aquí
+
+
         appContext.clearCallbackTurno();
 
         configurarColumnas();

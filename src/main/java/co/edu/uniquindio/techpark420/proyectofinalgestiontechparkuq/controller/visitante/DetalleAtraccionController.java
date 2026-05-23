@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.app.AppContext;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.base.BaseController;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.abstractas.Ticket;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases.Atraccion;
@@ -36,7 +37,6 @@ import javafx.util.Duration;
 
 public class DetalleAtraccionController extends BaseController implements Initializable {
 
-    // ── Info básica ──────────────────────────────────────────────────────────
     @FXML private Label lblNombreAtraccion;
     @FXML private Label lblTipo;
     @FXML private Label lblZona;
@@ -44,28 +44,23 @@ public class DetalleAtraccionController extends BaseController implements Initia
     @FXML private Label lblEstado;
     @FXML private Label lblMotivoCierre;
 
-    // ── Restricciones ────────────────────────────────────────────────────────
     @FXML private Label lblAlturaMinima;
     @FXML private Label lblEdadMinima;
     @FXML private Label lblCapacidad;
     @FXML private Label lblCostoAdicional;
 
-    // ── Cola virtual ─────────────────────────────────────────────────────────
     @FXML private Label lblTiempoEspera;
     @FXML private Label lblPersonasEnCola;
     @FXML private Label lblFastPassDisponible;
     @FXML private ProgressBar barraOcupacion;
 
-    // ── Acciones del visitante ───────────────────────────────────────────────
     @FXML private Button btnUnirseACola;
     @FXML private Button btnAgregarFavorita;
     @FXML private Label lblMensajeAcceso;
 
-    // ── Estado interno ───────────────────────────────────────────────────────
     private Atraccion atraccion;
     private Visitante visitante;
 
-    // ────────────────────────────────────────────────────────────────────────
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         atraccion = appContext.getAtraccionSeleccionada();
@@ -82,11 +77,9 @@ public class DetalleAtraccionController extends BaseController implements Initia
         evaluarAcceso();
         actualizarBotonFavorita();
 
-        // Registrar callback: si el turno llega mientras se está en esta vista, mostrar popup
         appContext.setCallbackTurno(this::mostrarVentanaTurno);
     }
 
-    // ── Info general ─────────────────────────────────────────────────────────
     private void cargarInfoGeneral() {
         lblNombreAtraccion.setText(atraccion.getNombre());
         lblTipo.setText("Tipo: " + atraccion.getTipoAtraccion().name());
@@ -120,7 +113,6 @@ public class DetalleAtraccionController extends BaseController implements Initia
         }
     }
 
-    // ── Info de la cola ──────────────────────────────────────────────────────
     private void cargarInfoCola() {
         ColaVirtual cola = atraccion.getColaVirtual();
 
@@ -148,18 +140,33 @@ public class DetalleAtraccionController extends BaseController implements Initia
         barraOcupacion.setProgress(Math.min(ocupacion, 1.0));
     }
 
-    // ── Ventana fullscreen de turno ───────────────────────────────────────────
     private void mostrarVentanaTurno() {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.initStyle(StageStyle.UNDECORATED);
         stage.setFullScreen(true);
 
-        // ── Raíz con fondo de respaldo ────────────────────────────────────────
+        java.time.LocalDate hoy = java.time.LocalDate.now();
+        co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases.HistorialVisita historialHoy =
+                visitante.getHistorialVisitas().stream()
+                        .filter(h -> h.getFechaVisita().equals(hoy))
+                        .findFirst()
+                        .orElse(null);
+
+        if (historialHoy == null) {
+            historialHoy = new co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases.HistorialVisita(
+                    "H-" + System.currentTimeMillis(), visitante);
+            visitante.getHistorialVisitas().add(historialHoy);
+        }
+        historialHoy.registrarAtraccion(atraccion);
+        if (visitante.getTicketActivo() != null) {
+            historialHoy.registrarTicket(visitante.getTicketActivo());
+        }
+        AppContext.getInstance().guardarDatos(); // ← PERSISTENCIA (historial registrado)
+
         StackPane root = new StackPane();
         root.setStyle("-fx-background-color: #1a1a2e;");
 
-        // ── Imagen de fondo (opcional) ────────────────────────────────────────
         var imgStream = getClass().getResourceAsStream(
                 "/co/edu/uniquindio/techpark420/proyectofinalgestiontechparkuq/imgs/1.png");
         if (imgStream != null) {
@@ -170,13 +177,11 @@ public class DetalleAtraccionController extends BaseController implements Initia
             root.getChildren().add(imageView);
         }
 
-        // ── Overlay oscuro ────────────────────────────────────────────────────
         Rectangle overlay = new Rectangle();
         overlay.widthProperty().bind(stage.widthProperty());
         overlay.heightProperty().bind(stage.heightProperty());
         overlay.setFill(Color.rgb(0, 0, 0, 0.45));
 
-        // ── Texto principal ───────────────────────────────────────────────────
         Label lblTurno = new Label("🎉 ¡ES TU TURNO!");
         lblTurno.setStyle("""
                 -fx-font-size: 64px;
@@ -200,7 +205,6 @@ public class DetalleAtraccionController extends BaseController implements Initia
                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 8, 0.3, 1, 2);
                 """);
 
-        // ── Botón cerrar ──────────────────────────────────────────────────────
         Button btnCerrar = new Button("¡Entendido, voy!");
         btnCerrar.setStyle("""
                 -fx-background-color: #4caf50;
@@ -224,14 +228,12 @@ public class DetalleAtraccionController extends BaseController implements Initia
             ft.play();
         });
 
-        // ── Layout ────────────────────────────────────────────────────────────
         VBox contenido = new VBox(24, lblTurno, lblAtraccion, lblSub, btnCerrar);
         contenido.setAlignment(Pos.CENTER);
         contenido.setPadding(new Insets(40));
 
         root.getChildren().addAll(overlay, contenido);
 
-        // ── Fade in ───────────────────────────────────────────────────────────
         root.setOpacity(0);
         Scene scene = new Scene(root);
         stage.setScene(scene);
@@ -242,7 +244,6 @@ public class DetalleAtraccionController extends BaseController implements Initia
         fadeIn.setToValue(1.0);
         fadeIn.play();
 
-        // Actualizar UI de la vista de detalle al cerrar el popup
         stage.setOnHidden(e -> Platform.runLater(() -> {
             btnUnirseACola.setDisable(false);
             btnUnirseACola.setText("Unirse a la Cola");
@@ -250,7 +251,6 @@ public class DetalleAtraccionController extends BaseController implements Initia
         }));
     }
 
-    // ── Verificar si el visitante puede acceder ──────────────────────────────
     private void evaluarAcceso() {
         if (visitante.getTicketActivo() == null) {
             lblMensajeAcceso.setText("⚠ No tienes un ticket activo.");
@@ -301,7 +301,6 @@ public class DetalleAtraccionController extends BaseController implements Initia
         btnUnirseACola.setDisable(false);
     }
 
-    // ── Actualizar botón de favoritas al abrir la vista ──────────────────────
     private void actualizarBotonFavorita() {
         if (visitante.getAtraccionesFavoritas().contains(atraccion)) {
             btnAgregarFavorita.setText("★ En favoritas");
@@ -309,8 +308,6 @@ public class DetalleAtraccionController extends BaseController implements Initia
             btnAgregarFavorita.setText("☆ Agregar a favoritas");
         }
     }
-
-    // ── Acciones ─────────────────────────────────────────────────────────────
 
     @FXML
     private void unirseACola() {
@@ -323,7 +320,6 @@ public class DetalleAtraccionController extends BaseController implements Initia
             mostrarAlerta("Cola llena", "La cola de esta atracción está llena. Intenta más tarde.");
             return;
         }
-
         if (cola.getVisitantesEnCola().contains(visitante) ||
             cola.getVisitantesFastPass().contains(visitante)) {
             mostrarAlerta("Ya estás en cola", "Ya te encuentras en la cola de esta atracción.");
@@ -343,6 +339,7 @@ public class DetalleAtraccionController extends BaseController implements Initia
             if (atraccion.getCostoAdicional() > 0) {
                 visitante.realizarPago(atraccion.getCostoAdicional());
             }
+            AppContext.getInstance().guardarDatos(); // ← PERSISTENCIA (cola + saldo)
             mostrarAlerta("¡Unido a la cola!",
                     "Te has unido a la cola de " + atraccion.getNombre()
                     + ".\nTiempo estimado de espera: " + cola.calcularTiempoEspera() + " min."
@@ -361,22 +358,22 @@ public class DetalleAtraccionController extends BaseController implements Initia
         if (favoritas.contains(atraccion)) {
             visitante.removerFavorita(atraccion);
             btnAgregarFavorita.setText("☆ Agregar a favoritas");
+            AppContext.getInstance().guardarDatos(); // ← PERSISTENCIA
             mostrarAlerta("Removida", atraccion.getNombre() + " fue removida de tus favoritas.");
         } else {
             visitante.agregarFavorita(atraccion);
             btnAgregarFavorita.setText("★ En favoritas");
+            AppContext.getInstance().guardarDatos(); // ← PERSISTENCIA
             mostrarAlerta("Agregada", atraccion.getNombre() + " fue añadida a tus favoritas.");
         }
     }
 
     @FXML
     private void volverAlDashboard() {
-        // Limpiar callback pero NO detener el procesador (sigue en AppContext)
         appContext.clearCallbackTurno();
         navegarA("/co/edu/uniquindio/techpark420/proyectofinalgestiontechparkuq/views/visitante/dashboard-visitante.fxml");
     }
 
-    // ── Utilidad ─────────────────────────────────────────────────────────────
     private String encontrarZona() {
         for (Zona zona : parque.getZonas()) {
             if (zona.getAtracciones().contains(atraccion)) {
