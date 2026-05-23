@@ -1,5 +1,7 @@
 package co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases;
 
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +9,7 @@ import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.abstra
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.interfaces.Notificable;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.interfaces.Pagable;
 
-public class Visitante implements Notificable, Pagable {
+public class Visitante implements Notificable, Pagable, Serializable {
 
     private String id;
     private String nombre;
@@ -34,7 +36,6 @@ public class Visitante implements Notificable, Pagable {
         this.edad = edad;
         this.estatura = estatura;
         this.saldoVirtual = 0;
-
         this.atraccionesFavoritas = new ArrayList<>();
         this.historialVisitas = new ArrayList<>();
         this.notificaciones = new ArrayList<>();
@@ -85,11 +86,25 @@ public class Visitante implements Notificable, Pagable {
     }
 
     public boolean ingresarAtraccion(Atraccion atraccion) {
-        if (ticketActivo == null || atraccion == null) {
-            return false;
+        if (ticketActivo == null || atraccion == null) return false;
+        if (!ticketActivo.validarAcceso(atraccion)) return false;
+
+        LocalDate hoy = LocalDate.now();
+        HistorialVisita historialHoy = historialVisitas.stream()
+                .filter(h -> h.getFechaVisita().equals(hoy))
+                .findFirst()
+                .orElse(null);
+
+        if (historialHoy == null) {
+            historialHoy = new HistorialVisita("H-" + System.currentTimeMillis(), this);
+            historialVisitas.add(historialHoy);
         }
 
-        return ticketActivo.validarAcceso(atraccion);
+        historialHoy.registrarAtraccion(atraccion);
+        if (ticketActivo != null) {
+            historialHoy.registrarTicket(ticketActivo);
+        }
+        return true;
     }
 
     public List<HistorialVisita> consultarHistorial() {
@@ -140,43 +155,29 @@ public class Visitante implements Notificable, Pagable {
         return saldoVirtual;
     }
 
-    public String getId() {
-        return id;
-    }
 
-    public String getNombre() {
-        return nombre;
-    }
 
-    public String getDocumento() {
-        return documento;
-    }
+    public String getId()                              { return id; }
+    public String getNombre()                          { return nombre; }
+    public String getDocumento()                       { return documento; }
+    public int getEdad()                               { return edad; }
+    public double getEstatura()                        { return estatura; }
+    public double getSaldoVirtual()                    { return saldoVirtual; }
+    public String getFotoPerfil()                      { return fotoPerfil; }
+    public Ticket getTicketActivo()                    { return ticketActivo; }
+    public List<Atraccion> getAtraccionesFavoritas()   { return atraccionesFavoritas; }
+    public List<HistorialVisita> getHistorialVisitas() { return historialVisitas; }
+    public List<Notificacion> getNotificaciones()      { return notificaciones; }
 
-    public int getEdad() {
-        return edad;
-    }
 
-    public double getEstatura() {
-        return estatura;
-    }
 
-    public double getSaldoVirtual() {
-        return saldoVirtual;
-    }
+    public void setId(String id)                       { this.id = id; }
+    public void setNombre(String nombre)               { this.nombre = nombre; }
+    public void setDocumento(String documento)         { this.documento = documento; }
+    public void setEdad(int edad)                      { this.edad = edad; }
+    public void setEstatura(double estatura)           { this.estatura = estatura; }
+    public void setSaldoVirtual(double saldoVirtual)   { this.saldoVirtual = saldoVirtual; }
 
-    public String getFotoPerfil() {
-        return fotoPerfil;
-    }
-
-    public Ticket getTicketActivo() {
-        return ticketActivo;
-    }
-
-    public List<Atraccion> getAtraccionesFavoritas() {
-        return atraccionesFavoritas;
-    }
-
-    public List<HistorialVisita> getHistorialVisitas() {
-        return historialVisitas;
-    }
+    /** Guarda la ruta relativa a la foto de perfil, ej: "fotos/123456.jpg" */
+    public void setFotoPerfil(String fotoPerfil)       { this.fotoPerfil = fotoPerfil; }
 }

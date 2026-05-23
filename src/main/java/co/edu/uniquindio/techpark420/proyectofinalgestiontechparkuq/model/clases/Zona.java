@@ -1,11 +1,12 @@
 package co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.enums.EstadoAtraccion;
 
-public class Zona {
+public class Zona implements Serializable {
 
     private String id;
     private String nombre;
@@ -119,7 +120,7 @@ public class Zona {
         return atracciones;
     }
 
-    public List<Operador> getOperadoresAsignados() {
+    public List<Operador> getOperadores() {
         return operadoresAsignados;
     }
 

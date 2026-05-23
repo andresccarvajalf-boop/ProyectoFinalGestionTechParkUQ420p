@@ -1,8 +1,9 @@
 package co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class RevisionTecnica {
+public class RevisionTecnica implements Serializable {
 
     private String id;
     private LocalDate fecha;
@@ -68,7 +69,7 @@ public class RevisionTecnica {
         return id;
     }
 
-    public LocalDate getFecha() {
+    public LocalDate getFechaRevision() {
         return fecha;
     }
 
@@ -88,7 +89,7 @@ public class RevisionTecnica {
         return observaciones;
     }
 
-    public Operador getOperadorResponsable() {
+    public Operador getOperador() {
         return operadorResponsable;
     }
 

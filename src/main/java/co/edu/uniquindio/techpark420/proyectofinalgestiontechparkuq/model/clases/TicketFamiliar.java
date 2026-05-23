@@ -15,12 +15,14 @@ public class TicketFamiliar extends Ticket {
         this.miembrosFamilia = new ArrayList<>();
         this.cantidadPersonas = 0;
         this.descuentoAplicado = 0;
+
     }
 
     public TicketFamiliar(List<Visitante> miembrosFamilia) {
-        this.miembrosFamilia = miembrosFamilia != null ? miembrosFamilia : new ArrayList<>();
+        this.miembrosFamilia = miembrosFamilia != null ? new ArrayList<>(miembrosFamilia) : new ArrayList<>();
         this.cantidadPersonas = this.miembrosFamilia.size();
         this.descuentoAplicado = 0;
+        setPrecio(calcularPrecio());
     }
 
     @Override
@@ -54,12 +56,14 @@ public class TicketFamiliar extends Ticket {
         if (visitante != null && !miembrosFamilia.contains(visitante)) {
             miembrosFamilia.add(visitante);
             cantidadPersonas = miembrosFamilia.size();
+            setPrecio(calcularPrecio());
         }
     }
 
     public void removerMiembro(Visitante visitante) {
         if (miembrosFamilia.remove(visitante)) {
             cantidadPersonas = miembrosFamilia.size();
+            setPrecio(calcularPrecio());
         }
     }
 
@@ -67,15 +71,7 @@ public class TicketFamiliar extends Ticket {
         return "Ticket Familiar: descuento hasta " + (calcularDescuento() * 100) + "% según cantidad de personas.";
     }
 
-    public int getCantidadPersonas() {
-        return cantidadPersonas;
-    }
-
-    public double getDescuentoAplicado() {
-        return descuentoAplicado;
-    }
-
-    public List<Visitante> getMiembrosFamilia() {
-        return miembrosFamilia;
-    }
+    public int getCantidadPersonas() { return cantidadPersonas; }
+    public double getDescuentoAplicado() { return descuentoAplicado; }
+    public List<Visitante> getMiembrosFamilia() { return miembrosFamilia; }
 }

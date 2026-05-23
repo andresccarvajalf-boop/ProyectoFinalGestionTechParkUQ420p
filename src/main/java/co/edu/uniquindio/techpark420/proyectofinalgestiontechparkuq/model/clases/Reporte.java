@@ -1,9 +1,11 @@
 package co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class Reporte {
 
+
+public class Reporte implements Serializable {
     private String id;
     private String tipoReporte;
     private LocalDateTime fechaGeneracion;
@@ -47,7 +49,7 @@ public class Reporte {
     }
 
     public void calcularEstadisticas() {
-        // lógica futura de estadísticas
+
     }
 
     public String getId() {
