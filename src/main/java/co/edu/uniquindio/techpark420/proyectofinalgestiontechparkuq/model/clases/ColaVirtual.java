@@ -1,10 +1,10 @@
 package co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ColaVirtual {
-
+public class ColaVirtual implements Serializable {
     private String id;
     private int capacidadMaxima;
     private List<Visitante> visitantesEnCola;
@@ -101,4 +101,31 @@ public class ColaVirtual {
     public boolean isActiva() {
         return activa;
     }
+    public List<Visitante> getVisitantesEnCola() {
+    return visitantesEnCola;
+}
+
+    public List<Visitante> getVisitantesFastPass() {
+    return visitantesFastPass;
+}
+
+
+
+/**
+ * Atiende al siguiente visitante de la cola normal (sin FastPass).
+ * Retorna el visitante atendido, o null si la cola está vacía.
+ */
+public Visitante atenderSiguiente() {
+    if (visitantesEnCola.isEmpty()) return null;
+    return visitantesEnCola.remove(0);
+}
+
+/**
+ * Atiende al siguiente visitante de la cola FastPass.
+ * Retorna el visitante atendido, o null si la cola FastPass está vacía.
+ */
+public Visitante atenderSiguienteFastPass() {
+    if (visitantesFastPass.isEmpty()) return null;
+    return visitantesFastPass.remove(0);
+}
 }

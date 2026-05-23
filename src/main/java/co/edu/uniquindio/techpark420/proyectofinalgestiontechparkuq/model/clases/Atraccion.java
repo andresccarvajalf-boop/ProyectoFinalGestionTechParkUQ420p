@@ -1,12 +1,13 @@
 package co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.enums.EstadoAtraccion;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.enums.TipoAtraccion;
 
-public class Atraccion {
+public class Atraccion implements Serializable {
 
     private String id;
     private String nombre;
@@ -71,7 +72,7 @@ public class Atraccion {
     }
 
     public void verificarMantenimiento() {
-        if (visitantesAcumulados >= 500) {
+        if (visitantesAcumulados >= 3) { //PUSE 3 DE EJEMPLO PARA COMPROBAR, OBVIAMENTE ES 500
             estado = EstadoAtraccion.EN_MANTENIMIENTO;
             motivoCierre = "Mantenimiento preventivo";
         }
@@ -175,11 +176,66 @@ public class Atraccion {
         return colaVirtual;
     }
 
-    public List<RevisionTecnica> getRevisionesTecnicas() {
+    public List<RevisionTecnica> getRevisiones() {
         return revisionesTecnicas;
     }
 
     public List<Operador> getOperadoresResponsables() {
         return operadoresResponsables;
     }
+    public void setId(String id) {
+    this.id = id;
+}
+
+public void setNombre(String nombre) {
+    this.nombre = nombre;
+}
+
+public void setTipoAtraccion(TipoAtraccion tipoAtraccion) {
+    this.tipoAtraccion = tipoAtraccion;
+}
+
+public void setCapacidadMaxima(int capacidadMaxima) {
+    this.capacidadMaxima = capacidadMaxima;
+}
+
+public void setAlturaMinima(double alturaMinima) {
+    this.alturaMinima = alturaMinima;
+}
+
+public void setEdadMinima(int edadMinima) {
+    this.edadMinima = edadMinima;
+}
+
+public void setCostoAdicional(double costoAdicional) {
+    this.costoAdicional = costoAdicional;
+}
+
+public void setVisitantesAcumulados(int visitantesAcumulados) {
+    this.visitantesAcumulados = visitantesAcumulados;
+}
+
+public void setTiempoEspera(int tiempoEspera) {
+    this.tiempoEspera = tiempoEspera;
+}
+
+public void setEstado(EstadoAtraccion estado) {
+    this.estado = estado;
+}
+
+public void setMotivoCierre(String motivoCierre) {
+    this.motivoCierre = motivoCierre;
+}
+
+public void setColaVirtual(ColaVirtual colaVirtual) {
+    this.colaVirtual = colaVirtual;
+}
+
+public void setRevisionesTecnicas(List<RevisionTecnica> revisionesTecnicas) {
+    this.revisionesTecnicas = revisionesTecnicas;
+}
+
+public void setOperadoresResponsables(List<Operador> operadoresResponsables) {
+    this.operadoresResponsables = operadoresResponsables;
+}
 }

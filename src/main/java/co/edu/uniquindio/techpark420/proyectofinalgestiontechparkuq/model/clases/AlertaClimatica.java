@@ -1,11 +1,11 @@
 package co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AlertaClimatica {
-
+public class AlertaClimatica implements Serializable {
     private String id;
     private String tipoAlerta;
     private String descripcion;

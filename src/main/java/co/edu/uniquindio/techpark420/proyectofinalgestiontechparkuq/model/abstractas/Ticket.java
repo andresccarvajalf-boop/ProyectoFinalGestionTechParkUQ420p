@@ -1,12 +1,12 @@
 package co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.abstractas;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases.Atraccion;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases.Visitante;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.enums.TipoTicket;
-
-public abstract class Ticket {
+public abstract class Ticket implements Serializable {
 
     private String id;
     private LocalDate fechaCompra;

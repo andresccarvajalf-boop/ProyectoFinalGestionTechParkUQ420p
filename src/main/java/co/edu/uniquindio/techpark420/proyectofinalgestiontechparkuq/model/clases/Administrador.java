@@ -1,12 +1,14 @@
 package co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.abstractas.Empleado;
 
-public class Administrador extends Empleado {
 
+
+public class Administrador extends Empleado implements Serializable {
     private String cargo;
     private int usuariosGestionados;
     private List<Reporte> reportesGenerados;
@@ -25,31 +27,31 @@ public class Administrador extends Empleado {
     }
 
     public void crearZona(Zona zona) {
-        // lógica de creación de zona
+
     }
 
     public void modificarZona(Zona zona) {
-        // lógica de modificación de zona
+
     }
 
     public void eliminarZona(Zona zona) {
-        // lógica de eliminación de zona
+
     }
 
     public void crearAtraccion(Atraccion atraccion) {
-        // lógica de creación de atracción
+
     }
 
     public void modificarAtraccion(Atraccion atraccion) {
-        // lógica de modificación de atracción
+
     }
 
     public void eliminarAtraccion(Atraccion atraccion) {
-        // lógica de eliminación de atracción
+
     }
 
     public void asignarOperador(Operador operador, Zona zona) {
-        // asignar operador a zona
+
     }
 
     public void activarAlerta(AlertaClimatica alerta) {
@@ -76,7 +78,7 @@ public class Administrador extends Empleado {
         usuariosGestionados--;
     }
 
-    // Getters y setters básicos
+
     public String getCargo() {
         return cargo;
     }
