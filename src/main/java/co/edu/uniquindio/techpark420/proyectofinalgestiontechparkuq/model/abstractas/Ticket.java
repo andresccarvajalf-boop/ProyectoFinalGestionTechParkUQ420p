@@ -64,7 +64,7 @@ public abstract class Ticket implements Serializable {
         return precio;
     }
 
-    protected void setPrecio(double precio) {
+    public void setPrecio(double precio) {
         this.precio = precio;
     }
 

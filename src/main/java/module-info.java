@@ -3,19 +3,12 @@ module co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq {
     requires javafx.controls;
     requires javafx.fxml;
 
-    opens co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq
-        to javafx.fxml;
-
-    opens co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.base
-        to javafx.fxml;
-    opens co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.auth
-        to javafx.fxml;
-    opens co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.visitante
-        to javafx.fxml;
-    opens co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.operador
-        to javafx.fxml;
-    opens co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.admin
-        to javafx.fxml;
+    opens co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq to javafx.fxml;
+    opens co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.base to javafx.fxml;
+    opens co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.auth to javafx.fxml;
+    opens co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.visitante to javafx.fxml;
+    opens co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.operador to javafx.fxml;
+    opens co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.admin to javafx.fxml;
 
     exports co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq;
     exports co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.app;
