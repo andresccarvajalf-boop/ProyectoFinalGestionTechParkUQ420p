@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.visitante.CompraTicketController"
+           styleClass="root-pane"
+           stylesheets="@../../styles/main.css">
+
+
+    <ScrollPane fitToWidth="true"
+                hbarPolicy="NEVER"
+                styleClass="transparent-scroll">
+
+        <content>
+            <VBox alignment="TOP_CENTER"
+                  spacing="28"
+                  fillWidth="false">
+
+                <padding>
+                    <Insets top="40" right="40" bottom="40" left="40"/>
+                </padding>
+
+                <!-- HEADER -->
+                <HBox alignment="CENTER_LEFT"
+                      spacing="16"
+                      maxWidth="820"
+                      prefWidth="820">
+
+                    <Button text="← Volver"
+                            onAction="#volverAlDashboard"
+                            styleClass="ghost-button"/>
+
+                    <Label text="Comprar Ticket"
+                           styleClass="page-title"/>
+                </HBox>
+
+                <!-- CARD -->
+                <VBox spacing="22"
+                      maxWidth="820"
+                      prefWidth="820"
+                      styleClass="ticket-card">
+
+                    <!-- Tipo -->
+                    <VBox spacing="8">
+                        <Label text="Tipo de Ticket"
+                               styleClass="field-label"/>
+
+                        <ChoiceBox fx:id="choiceTipoTicket"
+                                   maxWidth="Infinity"/>
+                    </VBox>
+
+                    <!-- Descripción -->
+                    <VBox spacing="6">
+                        <Label text="Descripción"
+                               styleClass="field-label"/>
+
+                        <Label fx:id="lblDescripcionTicket"
+                               wrapText="true"
+                               styleClass="info-text"/>
+                    </VBox>
+
+                    <!-- PANEL FAMILIAR -->
+                    <VBox fx:id="panelFamiliar"
+                          spacing="18"
+                          styleClass="family-panel">
+
+                        <VBox spacing="8">
+                            <Label text="Número de personas"
+                                   styleClass="section-title"/>
+
+                            <Spinner fx:id="spinnerPersonas"
+                                     maxWidth="180"
+                                     onMouseClicked="#onPersonasCambian"/>
+                        </VBox>
+
+                        <Separator/>
+
+                        <VBox spacing="4">
+                            <Label text="Datos de los acompañantes"
+                                   styleClass="section-title"/>
+
+                            <Label text="El titular eres tú. Completa los datos de los demás miembros."
+                                   wrapText="true"
+                                   styleClass="muted-text"/>
+                        </VBox>
+
+                        <!-- Los bloques de acompañantes se generan dinámicamente.
+                             Cada bloque incluye: documento, nombre, edad y estatura. -->
+                        <VBox fx:id="panelAcompanantes"
+                              spacing="14"/>
+                    </VBox>
+
+                    <Separator/>
+
+                    <!-- FOOTER -->
+                    <HBox alignment="CENTER_LEFT"
+                          spacing="16">
+
+                        <VBox spacing="4">
+                            <Label text="Precio"
+                                   styleClass="field-label"/>
+
+                            <Label fx:id="lblPrecioTicket"
+                                   styleClass="precio-label"/>
+                        </VBox>
+
+                        <Region HBox.hgrow="ALWAYS"/>
+
+                        <VBox spacing="4"
+                              alignment="CENTER_RIGHT">
+
+                            <Label text="Saldo disponible"
+                                   styleClass="field-label"/>
+
+                            <Label fx:id="lblSaldoActual"
+                                   styleClass="saldo-label"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- BOTÓN -->
+                    <Button text="Confirmar Compra"
+                            onAction="#confirmarCompra"
+                            maxWidth="Infinity"
+                            styleClass="primary-button large-button"/>
+                </VBox>
+            </VBox>
+        </content>
+    </ScrollPane>
+</StackPane>
