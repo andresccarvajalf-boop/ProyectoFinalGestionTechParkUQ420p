@@ -17,14 +17,14 @@ import javafx.stage.Stage;
 
 public abstract class BaseController {
 
-    // ── Campos accesibles desde subclases ─────────────────────────────────
-    // Algunos controladores acceden a 'parque' y 'appContext' como variables.
-    // Los exponemos como campos protected para que compilen sin cambios.
+
+
+
 
     protected final AppContext appContext = AppContext.getInstance();
     protected final Parque parque = AppContext.getInstance().getParque();
 
-    // ── Acceso al contexto ────────────────────────────────────────────────
+
     protected Parque getParque() {
         return AppContext.getInstance().getParque();
     }
@@ -37,7 +37,7 @@ public abstract class BaseController {
         return AppContext.getInstance().getVisitanteEnSesion();
     }
 
-    // ── Navegación ────────────────────────────────────────────────────────
+
     protected void navegarA(String rutaFxml) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(rutaFxml));
@@ -83,7 +83,7 @@ public abstract class BaseController {
         }
     }
 
-    // ── Diálogos ──────────────────────────────────────────────────────────
+
 
     protected void mostrarInfo(String titulo, String mensaje) {
         Alert alerta = new Alert(Alert.AlertType.INFORMATION);
@@ -130,7 +130,7 @@ public abstract class BaseController {
         return resultado.isPresent() && resultado.get() == ButtonType.OK;
     }
 
-    // ── Rutas FXML ────────────────────────────────────────────────────────
+
     protected static final String VISTA_LOGIN =
             "/co/edu/uniquindio/techpark420/proyectofinalgestiontechparkuq/views/login-view.fxml";
     protected static final String VISTA_DASHBOARD_VISITANTE =

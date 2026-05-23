@@ -1,5 +1,10 @@
 package co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.operador;
 
+import java.net.URL;
+import java.util.Optional;
+import java.util.ResourceBundle;
+import java.util.UUID;
+
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.app.AppContext;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.base.BaseController;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases.Atraccion;
@@ -23,31 +28,21 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
-import java.net.URL;
-import java.util.Optional;
-import java.util.ResourceBundle;
-import java.util.UUID;
-
 public class GestionAtraccionOperadorController extends BaseController implements Initializable {
 
-    // ── Header ──
-    @FXML private Label  nombreAtraccionLabel;
-    @FXML private Label  estadoActualLabel;
+    @FXML private Label nombreAtraccionLabel;
+    @FXML private Label estadoActualLabel;
 
-    // ── Cambiar estado ──
     @FXML private ChoiceBox<EstadoAtraccion> nuevoEstadoChoice;
-    @FXML private Label  errorEstadoLabel;
+    @FXML private Label errorEstadoLabel;
 
-    // ── Validar ingreso ──
     @FXML private TextField documentoVisitanteField;
     @FXML private Label     resultadoValidacionLabel;
 
-    // ── Mantenimiento ──
-    @FXML private Label     totalRevisionesLabel;
-    @FXML private Button    registrarRevisionButton;
+    @FXML private Label  totalRevisionesLabel;
+    @FXML private Button registrarRevisionButton;
 
-    // ── Tabla revisiones ──
-    @FXML private TableView<RevisionTecnica>          revisionesTable;
+    @FXML private TableView<RevisionTecnica>           revisionesTable;
     @FXML private TableColumn<RevisionTecnica, String> colFechaRevision;
     @FXML private TableColumn<RevisionTecnica, String> colOperadorRevision;
     @FXML private TableColumn<RevisionTecnica, String> colDescripcion;
@@ -58,30 +53,25 @@ public class GestionAtraccionOperadorController extends BaseController implement
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        atraccion       = AppContext.getInstance().getAtraccionSeleccionada();
-        operadorActivo  = AppContext.getInstance().getOperadorActivo();
+        atraccion      = AppContext.getInstance().getAtraccionSeleccionada();
+        operadorActivo = AppContext.getInstance().getOperadorActivo();
 
         nuevoEstadoChoice.setItems(FXCollections.observableArrayList(EstadoAtraccion.values()));
         configurarTablaRevisiones();
         cargarDatos();
     }
 
-    // ── Configuración ────────────────────────────────────────────────────────
-
     private void configurarTablaRevisiones() {
         colFechaRevision.setCellValueFactory(data ->
                 new SimpleStringProperty(
                         data.getValue().getFechaRevision() != null
                                 ? data.getValue().getFechaRevision().toString() : "—"));
-
         colOperadorRevision.setCellValueFactory(data ->
                 new SimpleStringProperty(
                         data.getValue().getOperador() != null
                                 ? data.getValue().getOperador().getNombre() : "—"));
-
         colDescripcion.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().getDescripcion()));
-
         colResultado.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().isAprobada() ? "✔ Aprobada" : "✘ Rechazada"));
     }
@@ -91,24 +81,17 @@ public class GestionAtraccionOperadorController extends BaseController implement
 
         nombreAtraccionLabel.setText(atraccion.getNombre());
         estadoActualLabel.setText(atraccion.getEstado() != null ? atraccion.getEstado().name() : "—");
-
         nuevoEstadoChoice.setValue(atraccion.getEstado());
-
-        // Ocultar mensajes anteriores
         ocultarMensajes();
 
-        // Mantenimiento
         int totalRevisiones = atraccion.getRevisiones() != null ? atraccion.getRevisiones().size() : 0;
         totalRevisionesLabel.setText(String.valueOf(totalRevisiones));
         registrarRevisionButton.setDisable(atraccion.getEstado() != EstadoAtraccion.EN_MANTENIMIENTO);
 
-        // Tabla revisiones
         if (atraccion.getRevisiones() != null) {
             revisionesTable.setItems(FXCollections.observableArrayList(atraccion.getRevisiones()));
         }
     }
-
-    // ── Handlers FXML ────────────────────────────────────────────────────────
 
     @FXML
     private void handleCambiarEstado() {
@@ -125,6 +108,7 @@ public class GestionAtraccionOperadorController extends BaseController implement
         }
 
         operadorActivo.cambiarEstadoAtraccion(atraccion, nuevoEstado);
+        AppContext.getInstance().guardarDatos(); // ← PERSISTENCIA
         cargarDatos();
     }
 
@@ -137,15 +121,13 @@ public class GestionAtraccionOperadorController extends BaseController implement
             mostrarResultadoValidacion("Ingresa el documento del visitante.", false);
             return;
         }
-
         if (atraccion.getEstado() != EstadoAtraccion.ACTIVA) {
             mostrarResultadoValidacion("La atracción no está activa.", false);
             return;
         }
 
         Visitante visitante = AppContext.getInstance().getParque()
-                .getVisitantes()
-                .stream()
+                .getVisitantes().stream()
                 .filter(v -> v.getDocumento().equalsIgnoreCase(documento))
                 .findFirst()
                 .orElse(null);
@@ -158,6 +140,7 @@ public class GestionAtraccionOperadorController extends BaseController implement
         boolean acceso = operadorActivo.validarIngreso(visitante, atraccion);
         if (acceso) {
             atraccion.registrarIngreso(visitante);
+            AppContext.getInstance().guardarDatos(); // ← PERSISTENCIA
             documentoVisitanteField.clear();
             cargarDatos();
             mostrarResultadoValidacion("✔ Acceso autorizado: " + visitante.getNombre(), true);
@@ -178,9 +161,9 @@ public class GestionAtraccionOperadorController extends BaseController implement
             return;
         }
 
-        Optional<RevisionTecnica> resultado = abrirDialogoRevision();
-        resultado.ifPresent(revision -> {
+        abrirDialogoRevision().ifPresent(revision -> {
             operadorActivo.registrarRevisionTecnica(revision);
+            AppContext.getInstance().guardarDatos(); // ← PERSISTENCIA
             cargarDatos();
             mostrarAlerta("Revisión registrada",
                     revision.isAprobada()
@@ -190,33 +173,29 @@ public class GestionAtraccionOperadorController extends BaseController implement
     }
 
     @FXML
-    private void volver() {
+    private void onVolver() {
         navegarA(VISTA_DASHBOARD_OPERADOR);
     }
-
-    // ── Diálogo revisión técnica ─────────────────────────────────────────────
 
     private Optional<RevisionTecnica> abrirDialogoRevision() {
         Dialog<RevisionTecnica> dialogo = new Dialog<>();
         dialogo.setTitle("Registrar Revisión Técnica");
         dialogo.setHeaderText("Atracción: " + atraccion.getNombre());
 
-        ButtonType btnAprobar  = new ButtonType("Aprobar",   ButtonBar.ButtonData.OK_DONE);
-        ButtonType btnRechazar = new ButtonType("Rechazar",  ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType btnAprobar  = new ButtonType("Aprobar",  ButtonBar.ButtonData.OK_DONE);
+        ButtonType btnRechazar = new ButtonType("Rechazar", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialogo.getDialogPane().getButtonTypes().addAll(btnAprobar, btnRechazar);
 
         TextField tfDescripcion   = new TextField();
         tfDescripcion.setPromptText("Descripción de la revisión");
-        TextArea  taObservaciones = new TextArea();
+        TextArea taObservaciones  = new TextArea();
         taObservaciones.setPromptText("Observaciones");
         taObservaciones.setPrefRowCount(3);
 
         GridPane grid = new GridPane();
         grid.setHgap(10); grid.setVgap(10);
-        grid.add(new Label("Descripción:"),   0, 0);
-        grid.add(tfDescripcion,               1, 0);
-        grid.add(new Label("Observaciones:"), 0, 1);
-        grid.add(taObservaciones,             1, 1);
+        grid.add(new Label("Descripción:"),   0, 0); grid.add(tfDescripcion,  1, 0);
+        grid.add(new Label("Observaciones:"), 0, 1); grid.add(taObservaciones, 1, 1);
         dialogo.getDialogPane().setContent(grid);
 
         dialogo.setResultConverter(boton -> {
@@ -241,8 +220,6 @@ public class GestionAtraccionOperadorController extends BaseController implement
 
         return dialogo.showAndWait();
     }
-
-    // ── Helpers de UI ────────────────────────────────────────────────────────
 
     private void ocultarMensajes() {
         errorEstadoLabel.setVisible(false);

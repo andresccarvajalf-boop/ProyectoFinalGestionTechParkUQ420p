@@ -21,17 +21,17 @@ import javafx.scene.control.TableView;
 
 public class DashboardOperadorController extends BaseController implements Initializable {
 
-    // ── Labels del header ──
+
     @FXML private Label nombreOperadorLabel;
     @FXML private Label zonaAsignadaLabel;
 
-    // ── Tarjetas de resumen ──
+
     @FXML private Label totalAtraccionesLabel;
     @FXML private Label abieratasLabel;          // nombre exacto del FXML (typo incluido)
     @FXML private Label mantenimientoLabel;
     @FXML private Label visitantesAcumuladosLabel;
 
-    // ── Tabla ──
+
     @FXML private TableView<Atraccion>          atraccionesTable;
     @FXML private TableColumn<Atraccion, String> colNombre;
     @FXML private TableColumn<Atraccion, String> colEstado;
@@ -39,7 +39,7 @@ public class DashboardOperadorController extends BaseController implements Initi
     @FXML private TableColumn<Atraccion, String> colTiempoEspera;
     @FXML private TableColumn<Atraccion, String> colVisitantesHoy;
 
-    // ── Botones ──
+
     @FXML private Button gestionarButton;
 
     private Operador operadorActivo;
