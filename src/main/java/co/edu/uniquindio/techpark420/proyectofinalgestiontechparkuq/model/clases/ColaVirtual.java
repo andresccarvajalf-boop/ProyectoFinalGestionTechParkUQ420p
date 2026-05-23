@@ -111,19 +111,13 @@ public class ColaVirtual implements Serializable {
 
 
 
-/**
- * Atiende al siguiente visitante de la cola normal (sin FastPass).
- * Retorna el visitante atendido, o null si la cola está vacía.
- */
+
 public Visitante atenderSiguiente() {
     if (visitantesEnCola.isEmpty()) return null;
     return visitantesEnCola.remove(0);
 }
 
-/**
- * Atiende al siguiente visitante de la cola FastPass.
- * Retorna el visitante atendido, o null si la cola FastPass está vacía.
- */
+
 public Visitante atenderSiguienteFastPass() {
     if (visitantesFastPass.isEmpty()) return null;
     return visitantesFastPass.remove(0);

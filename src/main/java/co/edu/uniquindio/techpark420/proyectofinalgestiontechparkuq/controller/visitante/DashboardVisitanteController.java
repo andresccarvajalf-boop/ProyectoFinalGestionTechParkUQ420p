@@ -70,10 +70,7 @@ public class DashboardVisitanteController extends BaseController implements Init
 
 
 
-    /**
-     * Muestra la foto guardada del visitante, o la imagen por defecto (1.png)
-     * si todavía no tiene foto asignada o si el archivo fue movido/eliminado.
-     */
+
     private void cargarFotoPerfil() {
         if (imgPerfil == null) return;
 
@@ -91,10 +88,6 @@ public class DashboardVisitanteController extends BaseController implements Init
         imgPerfil.setImage(imagen);
     }
 
-    /**
-     * Abre un FileChooser para que el visitante seleccione su foto de perfil.
-     * Copia el archivo a la carpeta "fotos/" y persiste la ruta en el modelo.
-     */
     @FXML
     private void subirFoto() {
         FileChooser chooser = new FileChooser();

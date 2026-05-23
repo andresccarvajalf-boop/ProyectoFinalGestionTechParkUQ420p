@@ -10,6 +10,7 @@ import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.app.AppConte
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.base.BaseController;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases.Administrador;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases.Atraccion;
+import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases.ColaVirtual;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases.Parque;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases.Zona;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.enums.TipoAtraccion;
@@ -70,6 +71,8 @@ public class GestionZonasAtraccionesController extends BaseController implements
         configurarSeleccionAtracciones();
     }
 
+    // ── Columnas ──────────────────────────────────────────────────────────
+
     private void configurarColumnasZonas() {
         colZonaNombre.setCellValueFactory(d ->
                 new SimpleStringProperty(d.getValue().getNombre()));
@@ -105,6 +108,8 @@ public class GestionZonasAtraccionesController extends BaseController implements
                 new SimpleStringProperty(d.getValue().getEdadMinima() + " años"));
     }
 
+    // ── Carga de datos ────────────────────────────────────────────────────
+
     private void cargarZonas() {
         if (parque == null) return;
         listaZonas = FXCollections.observableArrayList(parque.getZonas());
@@ -117,6 +122,8 @@ public class GestionZonasAtraccionesController extends BaseController implements
         listaAtracciones = FXCollections.observableArrayList(todas);
         atraccionesTable.setItems(listaAtracciones);
     }
+
+    // ── Selección ─────────────────────────────────────────────────────────
 
     private void configurarSeleccionZonas() {
         zonasTable.getSelectionModel().selectedItemProperty().addListener((obs, ant, sel) -> {
@@ -138,6 +145,8 @@ public class GestionZonasAtraccionesController extends BaseController implements
         eliminarAtraccionButton.setDisable(true);
     }
 
+    // ── Acciones de Zonas ─────────────────────────────────────────────────
+
     @FXML private void buscarZona() {
         String texto = buscarZonaField.getText().trim().toLowerCase();
         if (texto.isEmpty()) { cargarZonas(); return; }
@@ -151,7 +160,7 @@ public class GestionZonasAtraccionesController extends BaseController implements
         abrirDialogoZona(null).ifPresent(zona -> {
             parque.agregarZona(zona);
             listaZonas.add(zona);
-            AppContext.getInstance().guardarDatos(); // ← PERSISTENCIA
+            AppContext.getInstance().guardarDatos();
             mostrarAlerta("Zona creada", "La zona \"" + zona.getNombre() + "\" fue creada.");
         });
     }
@@ -160,7 +169,7 @@ public class GestionZonasAtraccionesController extends BaseController implements
         Zona seleccionada = zonasTable.getSelectionModel().getSelectedItem();
         if (seleccionada == null) return;
         abrirDialogoZona(seleccionada).ifPresent(z -> {
-            AppContext.getInstance().guardarDatos(); // ← PERSISTENCIA
+            AppContext.getInstance().guardarDatos();
             zonasTable.refresh();
             mostrarAlerta("Zona actualizada", "La zona fue actualizada.");
         });
@@ -172,9 +181,11 @@ public class GestionZonasAtraccionesController extends BaseController implements
         if (!confirmar("Eliminar zona", "¿Eliminar \"" + seleccionada.getNombre() + "\"?")) return;
         parque.removerZona(seleccionada);
         listaZonas.remove(seleccionada);
-        AppContext.getInstance().guardarDatos(); // ← PERSISTENCIA
+        AppContext.getInstance().guardarDatos();
         cargarTodasLasAtracciones();
     }
+
+    // ── Acciones de Atracciones ───────────────────────────────────────────
 
     @FXML private void buscarAtraccion() {
         String texto = buscarAtraccionField.getText().trim().toLowerCase();
@@ -196,9 +207,13 @@ public class GestionZonasAtraccionesController extends BaseController implements
             Zona zona   = (Zona)      datos[1];
             zona.agregarAtraccion(a);
             listaAtracciones.add(a);
-            AppContext.getInstance().guardarDatos(); // ← PERSISTENCIA
+            AppContext.getInstance().guardarDatos();
             atraccionesTable.refresh();
-            mostrarAlerta("Atracción creada", "\"" + a.getNombre() + "\" agregada a \"" + zona.getNombre() + "\".");
+            mostrarAlerta("Atracción creada",
+                    "\"" + a.getNombre() + "\" agregada a \"" + zona.getNombre() + "\".\n" +
+                    (a.getColaVirtual() != null
+                            ? "✅ Cola virtual activada (cap. " + a.getColaVirtual().getCapacidadMaxima() + ")."
+                            : "ℹ️ Sin cola virtual."));
         });
     }
 
@@ -214,7 +229,7 @@ public class GestionZonasAtraccionesController extends BaseController implements
                 zonaActual.removerAtraccion(seleccionada);
                 nuevaZona.agregarAtraccion(seleccionada);
             }
-            AppContext.getInstance().guardarDatos(); // ← PERSISTENCIA
+            AppContext.getInstance().guardarDatos();
             atraccionesTable.refresh();
             mostrarAlerta("Atracción actualizada", "La atracción fue actualizada.");
         });
@@ -226,12 +241,14 @@ public class GestionZonasAtraccionesController extends BaseController implements
         if (!confirmar("Eliminar atracción", "¿Eliminar \"" + seleccionada.getNombre() + "\"?")) return;
         parque.getZonas().forEach(z -> z.removerAtraccion(seleccionada));
         listaAtracciones.remove(seleccionada);
-        AppContext.getInstance().guardarDatos(); // ← PERSISTENCIA
+        AppContext.getInstance().guardarDatos();
     }
 
     @FXML private void onVolver() {
         navegarA("/co/edu/uniquindio/techpark420/proyectofinalgestiontechparkuq/views/admin/dashboard-admin.fxml");
     }
+
+    // ── Diálogo Zona ──────────────────────────────────────────────────────
 
     private Optional<Zona> abrirDialogoZona(Zona existente) {
         Dialog<Zona> dialogo = new Dialog<>();
@@ -241,7 +258,8 @@ public class GestionZonasAtraccionesController extends BaseController implements
         dialogo.getDialogPane().getButtonTypes().addAll(btnGuardar, btnCancelar);
 
         TextField tfNombre    = new TextField(existente != null ? existente.getNombre() : "");
-        TextField tfCapacidad = new TextField(existente != null ? String.valueOf(existente.getCapacidadMaxima()) : "");
+        TextField tfCapacidad = new TextField(existente != null
+                ? String.valueOf(existente.getCapacidadMaxima()) : "");
         tfNombre.setPromptText("Nombre de la zona");
         tfCapacidad.setPromptText("Capacidad máxima");
 
@@ -270,6 +288,8 @@ public class GestionZonasAtraccionesController extends BaseController implements
         return dialogo.showAndWait();
     }
 
+    // ── Diálogo Atracción ─────────────────────────────────────────────────
+
     private Optional<Object[]> abrirDialogoAtraccion(Atraccion existente, Zona zonaActual) {
         Dialog<Object[]> dialogo = new Dialog<>();
         dialogo.setTitle(existente == null ? "Nueva Atracción" : "Editar Atracción");
@@ -277,33 +297,84 @@ public class GestionZonasAtraccionesController extends BaseController implements
         ButtonType btnCancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialogo.getDialogPane().getButtonTypes().addAll(btnGuardar, btnCancelar);
 
+        // ── Campos básicos ──────────────────────────────────────────────
         TextField tfNombre    = new TextField(existente != null ? existente.getNombre() : "");
-        TextField tfCapacidad = new TextField(existente != null ? String.valueOf(existente.getCapacidadMaxima()) : "");
-        TextField tfAltura    = new TextField(existente != null ? String.valueOf(existente.getAlturaMinima()) : "0.0");
-        TextField tfEdad      = new TextField(existente != null ? String.valueOf(existente.getEdadMinima()) : "0");
-        TextField tfCosto     = new TextField(existente != null ? String.valueOf(existente.getCostoAdicional()) : "0.0");
+        TextField tfCapacidad = new TextField(existente != null
+                ? String.valueOf(existente.getCapacidadMaxima()) : "");
+        TextField tfAltura    = new TextField(existente != null
+                ? String.valueOf(existente.getAlturaMinima()) : "0.0");
+        TextField tfEdad      = new TextField(existente != null
+                ? String.valueOf(existente.getEdadMinima()) : "0");
+        TextField tfCosto     = new TextField(existente != null
+                ? String.valueOf(existente.getCostoAdicional()) : "0.0");
 
-        ChoiceBox<TipoAtraccion> choiceTipo = new ChoiceBox<>(FXCollections.observableArrayList(TipoAtraccion.values()));
-        choiceTipo.setValue(existente != null ? existente.getTipoAtraccion() : TipoAtraccion.values()[0]);
+        tfNombre.setPromptText("Nombre de la atracción");
+        tfCapacidad.setPromptText("Ej: 30");
+        tfAltura.setPromptText("Ej: 1.20");
+        tfEdad.setPromptText("Ej: 7");
+        tfCosto.setPromptText("Ej: 5000");
 
-        ChoiceBox<Zona> choiceZona = new ChoiceBox<>(FXCollections.observableArrayList(parque.getZonas()));
+        // ── Tipo de atracción ───────────────────────────────────────────
+        ChoiceBox<TipoAtraccion> choiceTipo =
+                new ChoiceBox<>(FXCollections.observableArrayList(TipoAtraccion.values()));
+        choiceTipo.setValue(existente != null
+                ? existente.getTipoAtraccion() : TipoAtraccion.values()[0]);
+
+        // ── Zona ────────────────────────────────────────────────────────
+        ChoiceBox<Zona> choiceZona =
+                new ChoiceBox<>(FXCollections.observableArrayList(parque.getZonas()));
         choiceZona.setValue(zonaActual != null ? zonaActual : parque.getZonas().get(0));
         choiceZona.setConverter(new javafx.util.StringConverter<Zona>() {
-            @Override public String toString(Zona zona) { return zona != null ? zona.getNombre() : ""; }
-            @Override public Zona fromString(String string) { return null; }
+            @Override public String toString(Zona z)       { return z != null ? z.getNombre() : ""; }
+            @Override public Zona fromString(String s)     { return null; }
         });
 
+        // ── Cola Virtual ────────────────────────────────────────────────
+        // Determinar estado actual de la cola si se está editando
+        boolean tieneColaActiva = existente != null
+                && existente.getColaVirtual() != null
+                && existente.getColaVirtual().isActiva();
+
+        ChoiceBox<String> choiceCola = new ChoiceBox<>(
+                FXCollections.observableArrayList("Sí, activar cola", "No, sin cola"));
+        choiceCola.setValue(tieneColaActiva ? "Sí, activar cola" : "No, sin cola");
+
+        // Capacidad de la cola (solo relevante si se activa)
+        TextField tfCapCola = new TextField(
+                (existente != null && existente.getColaVirtual() != null)
+                        ? String.valueOf(existente.getColaVirtual().getCapacidadMaxima())
+                        : "50");
+        tfCapCola.setPromptText("Capacidad de la cola");
+        tfCapCola.setDisable(!tieneColaActiva);
+
+        // Habilitar/deshabilitar campo de capacidad según selección
+        choiceCola.getSelectionModel().selectedItemProperty().addListener((obs, old, nuevo) ->
+                tfCapCola.setDisable(!"Sí, activar cola".equals(nuevo))
+        );
+
+        // ── Grid ────────────────────────────────────────────────────────
         GridPane grid = new GridPane();
-        grid.setHgap(10); grid.setVgap(10); grid.setPadding(new Insets(10));
-        grid.add(new Label("Nombre:"),            0, 0); grid.add(tfNombre,    1, 0);
-        grid.add(new Label("Tipo:"),              0, 1); grid.add(choiceTipo,  1, 1);
-        grid.add(new Label("Zona:"),              0, 2); grid.add(choiceZona,  1, 2);
-        grid.add(new Label("Capacidad:"),         0, 3); grid.add(tfCapacidad, 1, 3);
-        grid.add(new Label("Altura mínima (m):"), 0, 4); grid.add(tfAltura,    1, 4);
-        grid.add(new Label("Edad mínima:"),       0, 5); grid.add(tfEdad,      1, 5);
-        grid.add(new Label("Costo adicional:"),   0, 6); grid.add(tfCosto,     1, 6);
+        grid.setHgap(10); grid.setVgap(10);
+        grid.setPadding(new Insets(16));
+        grid.setMinWidth(380);
+
+        int fila = 0;
+        grid.add(new Label("Nombre:"),              0, fila); grid.add(tfNombre,    1, fila++);
+        grid.add(new Label("Tipo:"),                0, fila); grid.add(choiceTipo,  1, fila++);
+        grid.add(new Label("Zona:"),                0, fila); grid.add(choiceZona,  1, fila++);
+        grid.add(new Label("Capacidad máx.:"),      0, fila); grid.add(tfCapacidad, 1, fila++);
+        grid.add(new Label("Altura mínima (m):"),   0, fila); grid.add(tfAltura,    1, fila++);
+        grid.add(new Label("Edad mínima (años):"),  0, fila); grid.add(tfEdad,      1, fila++);
+        grid.add(new Label("Costo adicional ($):"), 0, fila); grid.add(tfCosto,     1, fila++);
+
+        // Separador visual antes de la sección de cola
+        grid.add(new Label("── Cola Virtual ──────────────"), 0, fila, 2, 1); fila++;
+        grid.add(new Label("¿Activar cola virtual?"),         0, fila); grid.add(choiceCola,  1, fila++);
+        grid.add(new Label("Capacidad de la cola:"),          0, fila); grid.add(tfCapCola,   1, fila++);
+
         dialogo.getDialogPane().setContent(grid);
 
+        // ── Resultado ───────────────────────────────────────────────────
         dialogo.setResultConverter(boton -> {
             if (boton != btnGuardar) return null;
             try {
@@ -314,9 +385,14 @@ public class GestionZonasAtraccionesController extends BaseController implements
                 double costo  = Double.parseDouble(tfCosto.getText().trim());
                 TipoAtraccion tipo = choiceTipo.getValue();
                 Zona zona = choiceZona.getValue();
+
                 if (nombre.isEmpty() || zona == null) return null;
-                Atraccion a = existente != null ? existente
+
+                // Crear o reusar la atracción
+                Atraccion a = existente != null
+                        ? existente
                         : new Atraccion(UUID.randomUUID().toString(), nombre, tipo, cap);
+
                 if (existente != null) {
                     existente.setNombre(nombre);
                     existente.setTipoAtraccion(tipo);
@@ -325,11 +401,43 @@ public class GestionZonasAtraccionesController extends BaseController implements
                 a.setAlturaMinima(altura);
                 a.setEdadMinima(edad);
                 a.setCostoAdicional(costo);
+
+                // ── Asignar / actualizar cola virtual ──────────────────
+                boolean activarCola = "Sí, activar cola".equals(choiceCola.getValue());
+                if (activarCola) {
+                    int capCola = 50; // valor por defecto
+                    try { capCola = Integer.parseInt(tfCapCola.getText().trim()); }
+                    catch (NumberFormatException ignored) {}
+
+                    if (a.getColaVirtual() == null) {
+                        // Crear nueva cola
+                        ColaVirtual cola = new ColaVirtual(
+                                UUID.randomUUID().toString(), capCola, a);
+                        a.setColaVirtual(cola);
+                    } else {
+                        // Cola existente: solo asegurarse de que esté activa
+                        a.getColaVirtual().abrirCola();
+                    }
+                } else {
+                    // El admin decidió no tener cola
+                    if (a.getColaVirtual() != null) {
+                        a.getColaVirtual().cerrarCola();
+                    } else {
+                        a.setColaVirtual(null);
+                    }
+                }
+
                 return new Object[]{a, zona};
-            } catch (NumberFormatException e) { return null; }
+
+            } catch (NumberFormatException e) {
+                return null;
+            }
         });
+
         return dialogo.showAndWait();
     }
+
+    // ── Utilidades ────────────────────────────────────────────────────────
 
     private boolean confirmar(String titulo, String mensaje) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);

@@ -113,10 +113,7 @@ public abstract class BaseController {
         alerta.showAndWait();
     }
 
-    /**
-     * Alias de mostrarInfo — muchos controladores llaman mostrarAlerta(titulo, msg).
-     * Evita tener que editar cada controlador.
-     */
+
     protected void mostrarAlerta(String titulo, String mensaje) {
         mostrarInfo(titulo, mensaje);
     }
