@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.admin.GestionVisitantesController"
+            styleClass="root-pane"
+            stylesheets="@../../styles/main.css">
+
+    <top>
+        <HBox styleClass="top-bar" alignment="CENTER_LEFT" spacing="12">
+            <padding>
+                <Insets top="12" right="24" bottom="12" left="24"/>
+            </padding>
+            <Button text="← Volver" onAction="#onVolver" styleClass="ghost-button"/>
+            <Label text="Gestión de Visitantes" styleClass="page-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Solo lectura" styleClass="info-text"/>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="16">
+            <padding>
+                <Insets top="24" right="24" bottom="24" left="24"/>
+            </padding>
+
+            <HBox spacing="16">
+                <VBox styleClass="card" spacing="8" HBox.hgrow="ALWAYS">
+                    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+                    <Label text="Total visitantes registrados" styleClass="card-title"/>
+                    <Label fx:id="totalVisitantesLabel" styleClass="card-value"/>
+                </VBox>
+                <VBox styleClass="card" spacing="8" HBox.hgrow="ALWAYS">
+                    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+                    <Label text="En el parque ahora" styleClass="card-title"/>
+                    <Label fx:id="visitantesActivosLabel" styleClass="card-value"/>
+                </VBox>
+                <VBox styleClass="card" spacing="8" HBox.hgrow="ALWAYS">
+                    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+                    <Label text="Con ticket activo" styleClass="card-title"/>
+                    <Label fx:id="visitantesConTicketLabel" styleClass="card-value"/>
+                </VBox>
+            </HBox>
+
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <TextField fx:id="buscarField" promptText="Buscar por nombre o documento..."
+                           styleClass="text-field" prefWidth="300"/>
+                <Button text="Buscar" onAction="#buscarVisitante" styleClass="secondary-button"/>
+                <Button text="Limpiar" onAction="#limpiarBusqueda" styleClass="ghost-button"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="resultadosBusquedaLabel" styleClass="info-text"/>
+            </HBox>
+
+            <SplitPane fx:id="splitPane" dividerPositions="0.55" VBox.vgrow="ALWAYS">
+
+                <VBox spacing="8">
+                    <TableView fx:id="visitantesTable" VBox.vgrow="ALWAYS" styleClass="table-view">
+                        <columns>
+                            <TableColumn fx:id="colDocumento" text="Documento" prefWidth="130"/>
+                            <TableColumn fx:id="colNombre" text="Nombre" prefWidth="180"/>
+                            <TableColumn fx:id="colEdad" text="Edad" prefWidth="70"/>
+                            <TableColumn fx:id="colAltura" text="Altura (cm)" prefWidth="100"/>
+                            <TableColumn fx:id="colSaldo" text="Saldo virtual" prefWidth="120"/>
+                            <TableColumn fx:id="colTicket" text="Tipo ticket" prefWidth="120"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+
+                <VBox styleClass="card" spacing="12" minWidth="260">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                    <Label text="Perfil del Visitante" styleClass="section-title"/>
+                    <Label fx:id="sinSeleccionLabel" text="Selecciona un visitante para ver su perfil."
+                           styleClass="info-text" wrapText="true"/>
+
+                    <VBox fx:id="perfilBox" spacing="10" visible="false" managed="false">
+                        <HBox spacing="8">
+                            <Label text="Nombre:" styleClass="field-label"/>
+                            <Label fx:id="perfilNombreLabel" styleClass="info-text"/>
+                        </HBox>
+                        <HBox spacing="8">
+                            <Label text="Documento:" styleClass="field-label"/>
+                            <Label fx:id="perfilDocumentoLabel" styleClass="info-text"/>
+                        </HBox>
+                        <HBox spacing="8">
+                            <Label text="Edad:" styleClass="field-label"/>
+                            <Label fx:id="perfilEdadLabel" styleClass="info-text"/>
+                        </HBox>
+                        <HBox spacing="8">
+                            <Label text="Altura:" styleClass="field-label"/>
+                            <Label fx:id="perfilAlturaLabel" styleClass="info-text"/>
+                        </HBox>
+                        <HBox spacing="8">
+                            <Label text="Saldo virtual:" styleClass="field-label"/>
+                            <Label fx:id="perfilSaldoLabel" styleClass="info-text"/>
+                        </HBox>
+                        <HBox spacing="8">
+                            <Label text="Ticket activo:" styleClass="field-label"/>
+                            <Label fx:id="perfilTicketLabel" styleClass="info-text"/>
+                        </HBox>
+
+                        <Separator/>
+
+                        <Label text="Historial de visitas" styleClass="section-title"/>
+                        <TableView fx:id="historialTable" prefHeight="180" styleClass="table-view">
+                            <columns>
+                                <TableColumn fx:id="colHistFecha" text="Fecha" prefWidth="120"/>
+                                <TableColumn fx:id="colHistAtraccion" text="Atracción" prefWidth="150"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </VBox>
+
+            </SplitPane>
+        </VBox>
+    </center>
+</BorderPane>

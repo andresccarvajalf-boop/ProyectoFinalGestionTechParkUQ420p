@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.admin.DashboardAdminController"
+            styleClass="root-pane"
+            stylesheets="@../../styles/main.css">
+            
+
+    <top>
+        <HBox styleClass="top-bar" alignment="CENTER_LEFT" spacing="16">
+            <padding>
+                <Insets top="12" right="24" bottom="12" left="24"/>
+            </padding>
+            <Label text="Tech-Park UQ — Administrador" styleClass="brand-label"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="nombreAdminLabel" styleClass="info-text"/>
+            <Button text="Cerrar sesión" onAction="#onCerrarSesion" styleClass="ghost-button"/>
+        </HBox>
+    </top>
+
+    <left>
+        <VBox styleClass="sidebar" spacing="4" minWidth="210">
+            <padding>
+                <Insets top="24" right="16" bottom="24" left="16"/>
+            </padding>
+            <Label text="Gestión" styleClass="sidebar-title"/>
+            <Button text="Inicio" onAction="#onRefrescar" maxWidth="Infinity" styleClass="sidebar-button"/>
+            <Button text="Zonas y Atracciones" onAction="#irAGestionZonas" maxWidth="Infinity" styleClass="sidebar-button"/>
+            <Button text="Empleados" onAction="#irAGestionEmpleados" maxWidth="Infinity" styleClass="sidebar-button"/>
+            <Button text="Visitantes" onAction="#irAGestionVisitantes" maxWidth="Infinity" styleClass="sidebar-button"/>
+            <Separator/>
+            <Label text="Operaciones" styleClass="sidebar-title"/>
+            <Button text="Alertas Climáticas" onAction="#irAAlertasClimaticas" maxWidth="Infinity" styleClass="sidebar-button"/>
+            <Button text="Reportes" onAction="#irAReportes" maxWidth="Infinity" styleClass="sidebar-button"/>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox spacing="24">
+            <padding>
+                <Insets top="24" right="24" bottom="24" left="24"/>
+            </padding>
+
+            <Label text="Resumen del Parque" styleClass="page-title"/>
+
+            <HBox spacing="16">
+                <VBox styleClass="card" spacing="8" HBox.hgrow="ALWAYS">
+                    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+                    <Label text="Visitantes en el parque" styleClass="card-title"/>
+                    <Label fx:id="visitantesActualesLabel" styleClass="card-value"/>
+                </VBox>
+                <VBox styleClass="card" spacing="8" HBox.hgrow="ALWAYS">
+                    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+                    <Label text="Capacidad total" styleClass="card-title"/>
+                    <Label fx:id="capacidadTotalLabel" styleClass="card-value"/>
+                </VBox>
+                <VBox styleClass="card" spacing="8" HBox.hgrow="ALWAYS">
+                    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+                    <Label text="Atracciones activas" styleClass="card-title"/>
+                    <Label fx:id="atraccionesActivasLabel" styleClass="card-value"/>
+                </VBox>
+                <VBox styleClass="card" spacing="8" HBox.hgrow="ALWAYS">
+                    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+                    <Label text="Alertas climáticas activas" styleClass="card-title"/>
+                    <Label fx:id="alertasActivasLabel" styleClass="card-value"/>
+                </VBox>
+            </HBox>
+
+            <HBox spacing="16">
+                <VBox styleClass="card" spacing="12" HBox.hgrow="ALWAYS">
+                    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+                    <Label text="Accesos rápidos" styleClass="section-title"/>
+                    <HBox spacing="12">
+                        <Button text="Nueva Atracción" onAction="#irAGestionZonas" styleClass="secondary-button"/>
+                        <Button text="Nuevo Empleado" onAction="#irAGestionEmpleados" styleClass="secondary-button"/>
+                        <Button text="Activar Alerta" onAction="#irAAlertasClimaticas" styleClass="secondary-button"/>
+                        <Button text="Ver Reportes" onAction="#irAReportes" styleClass="secondary-button"/>
+                    </HBox>
+                </VBox>
+
+                <VBox styleClass="card" spacing="12" HBox.hgrow="ALWAYS">
+                    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+                    <Label text="Zonas del parque" styleClass="section-title"/>
+                    <HBox spacing="8">
+                        <Label text="Total de zonas:" styleClass="field-label"/>
+                        <Label fx:id="totalZonasLabel" styleClass="info-text"/>
+                    </HBox>
+                    <HBox spacing="8">
+                        <Label text="Total de empleados:" styleClass="field-label"/>
+                        <Label fx:id="totalEmpleadosLabel" styleClass="info-text"/>
+                    </HBox>
+                    <HBox spacing="8">
+                        <Label text="Total de visitantes registrados:" styleClass="field-label"/>
+                        <Label fx:id="totalVisitantesLabel" styleClass="info-text"/>
+                    </HBox>
+                </VBox>
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>
