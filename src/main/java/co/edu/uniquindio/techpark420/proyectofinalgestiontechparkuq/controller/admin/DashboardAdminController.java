@@ -1,5 +1,8 @@
 package co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.admin;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.app.AppContext;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.base.BaseController;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases.Administrador;
@@ -9,17 +12,16 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
 public class DashboardAdminController extends BaseController implements Initializable {
 
-    @FXML private Label lblNombreAdmin;
-    @FXML private Label lblVisitantesActuales;
-    @FXML private Label lblTotalZonas;
-    @FXML private Label lblAtraccionesActivas;
-    @FXML private Label lblAlertasActivas;
-    @FXML private Label lblEmpleadosActivos;
+    @FXML private Label nombreAdminLabel;
+    @FXML private Label visitantesActualesLabel;
+    @FXML private Label capacidadTotalLabel;
+    @FXML private Label atraccionesActivasLabel;
+    @FXML private Label alertasActivasLabel;
+    @FXML private Label totalZonasLabel;
+    @FXML private Label totalEmpleadosLabel;
+    @FXML private Label totalVisitantesLabel;
 
     private Administrador administrador;
     private Parque parque;
@@ -33,61 +35,67 @@ public class DashboardAdminController extends BaseController implements Initiali
 
     private void cargarResumen() {
         if (administrador != null) {
-            lblNombreAdmin.setText("Bienvenido, " + administrador.getNombre());
+            nombreAdminLabel.setText("Bienvenido, " + administrador.getNombre());
         }
 
         if (parque == null) return;
 
-        lblVisitantesActuales.setText(String.valueOf(parque.getVisitantesActuales()));
-
-        lblTotalZonas.setText(String.valueOf(parque.getZonas().size()));
+        visitantesActualesLabel.setText(String.valueOf(parque.getVisitantesActuales()));
+        capacidadTotalLabel.setText(String.valueOf(parque.getCapacidadMaxima()));
+        totalZonasLabel.setText(String.valueOf(parque.getZonas().size()));
+        totalVisitantesLabel.setText(String.valueOf(parque.getVisitantes().size()));
 
         long activas = parque.getZonas().stream()
                 .flatMap(z -> z.getAtracciones().stream())
                 .filter(a -> a.getEstado() == EstadoAtraccion.ACTIVA)
                 .count();
-        lblAtraccionesActivas.setText(String.valueOf(activas));
+        atraccionesActivasLabel.setText(String.valueOf(activas));
 
         long alertas = parque.getAlertasClimaticas().stream()
                 .filter(a -> a.isActiva())
                 .count();
-        lblAlertasActivas.setText(String.valueOf(alertas));
+        alertasActivasLabel.setText(String.valueOf(alertas));
 
         long empleados = parque.getEmpleados().stream()
                 .filter(e -> e.isActivo())
                 .count();
-        lblEmpleadosActivos.setText(String.valueOf(empleados));
+        totalEmpleadosLabel.setText(String.valueOf(empleados));
     }
 
     @FXML
-    private void onGestionZonasAtracciones() {
+    private void irAGestionZonas() {
         navegarA("/co/edu/uniquindio/techpark420/proyectofinalgestiontechparkuq/views/admin/gestion-zonas-atracciones.fxml");
     }
 
+
     @FXML
-    private void onGestionEmpleados() {
+    private void irAGestionEmpleados() {
         navegarA("/co/edu/uniquindio/techpark420/proyectofinalgestiontechparkuq/views/admin/gestion-empleados.fxml");
     }
 
     @FXML
-    private void onGestionVisitantes() {
+    private void irAGestionVisitantes() {
         navegarA("/co/edu/uniquindio/techpark420/proyectofinalgestiontechparkuq/views/admin/gestion-visitantes.fxml");
     }
 
+
     @FXML
-    private void onAlertasClimaticas() {
+    private void irAAlertasClimaticas() {
         navegarA("/co/edu/uniquindio/techpark420/proyectofinalgestiontechparkuq/views/admin/alertas-climaticas.fxml");
     }
 
+
     @FXML
-    private void onReportes() {
+    private void irAReportes() {
         navegarA("/co/edu/uniquindio/techpark420/proyectofinalgestiontechparkuq/views/admin/reportes.fxml");
     }
+
 
     @FXML
     private void onRefrescar() {
         cargarResumen();
     }
+
 
     @FXML
     private void onCerrarSesion() {

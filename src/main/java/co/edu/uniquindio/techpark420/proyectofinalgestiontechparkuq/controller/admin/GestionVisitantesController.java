@@ -1,6 +1,8 @@
 package co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.admin;
 
+import java.net.URL;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.app.AppContext;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.base.BaseController;
@@ -10,130 +12,142 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 
-public class GestionVisitantesController extends BaseController {
+public class GestionVisitantesController extends BaseController implements Initializable {
 
-    @FXML private TableView<Visitante> tablaVisitantes;
-    @FXML private TableColumn<Visitante, String> colId;
-    @FXML private TableColumn<Visitante, String> colNombre;
+    @FXML private Label totalVisitantesLabel;
+    @FXML private Label visitantesActivosLabel;
+    @FXML private Label visitantesConTicketLabel;
+
+    @FXML private TextField buscarField;
+    @FXML private Label     resultadosBusquedaLabel;
+
+    @FXML private TableView<Visitante>           visitantesTable;
     @FXML private TableColumn<Visitante, String> colDocumento;
+    @FXML private TableColumn<Visitante, String> colNombre;
     @FXML private TableColumn<Visitante, String> colEdad;
-    @FXML private TableColumn<Visitante, String> colEstatura;
+    @FXML private TableColumn<Visitante, String> colAltura;
     @FXML private TableColumn<Visitante, String> colSaldo;
     @FXML private TableColumn<Visitante, String> colTicket;
 
-    @FXML private TableView<HistorialVisita> tablaHistorial;
-    @FXML private TableColumn<HistorialVisita, String> colFechaVisita;
-    @FXML private TableColumn<HistorialVisita, String> colAtraccionesVisitadas;
-    @FXML private TableColumn<HistorialVisita, String> colGasto;
+    @FXML private Label sinSeleccionLabel;
+    @FXML private VBox  perfilBox;
+    @FXML private Label perfilNombreLabel;
+    @FXML private Label perfilDocumentoLabel;
+    @FXML private Label perfilEdadLabel;
+    @FXML private Label perfilAlturaLabel;
+    @FXML private Label perfilSaldoLabel;
+    @FXML private Label perfilTicketLabel;
 
-    @FXML private TextField txtBuscar;
-    @FXML private Label lblNombreSeleccionado;
-    @FXML private Label lblDocumento;
-    @FXML private Label lblEdad;
-    @FXML private Label lblEstatura;
-    @FXML private Label lblSaldo;
-    @FXML private Label lblTicketActivo;
-    @FXML private Label lblFavoritas;
-    @FXML private Button btnVolver;
+    @FXML private TableView<HistorialVisita>           historialTable;
+    @FXML private TableColumn<HistorialVisita, String> colHistFecha;
+    @FXML private TableColumn<HistorialVisita, String> colHistAtraccion;
 
     private ObservableList<Visitante> listaVisitantes;
 
-    @FXML
-    public void initialize() {
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
         configurarColumnas();
         cargarVisitantes();
         configurarSeleccion();
-        limpiarPanelDetalle();
+        limpiarPerfil();
     }
 
     private void configurarColumnas() {
-        colId.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getId()));
-        colNombre.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getNombre()));
-        colDocumento.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getDocumento()));
-        colEdad.setCellValueFactory(data -> new SimpleStringProperty(String.valueOf(data.getValue().getEdad())));
-        colEstatura.setCellValueFactory(data -> new SimpleStringProperty(
-                String.format("%.2f m", data.getValue().getEstatura())));
-        colSaldo.setCellValueFactory(data -> new SimpleStringProperty(
-                String.format("$%.0f", data.getValue().getSaldoVirtual())));
-        colTicket.setCellValueFactory(data -> {
-            if (data.getValue().getTicketActivo() == null) return new SimpleStringProperty("Sin ticket");
-            return new SimpleStringProperty(data.getValue().getTicketActivo().getTipoTicket().name());
+        colDocumento.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getDocumento()));
+        colNombre.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getNombre()));
+        colEdad.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().getEdad())));
+        colAltura.setCellValueFactory(d -> new SimpleStringProperty(
+                String.format("%.0f cm", d.getValue().getEstatura() * 100)));
+        colSaldo.setCellValueFactory(d -> new SimpleStringProperty(
+                String.format("$%.0f", d.getValue().getSaldoVirtual())));
+        colTicket.setCellValueFactory(d -> {
+            if (d.getValue().getTicketActivo() == null) return new SimpleStringProperty("Sin ticket");
+            return new SimpleStringProperty(d.getValue().getTicketActivo().getTipoTicket().name());
         });
 
-        colFechaVisita.setCellValueFactory(data -> new SimpleStringProperty(
-                data.getValue().getFechaVisita().toString()));
-        colAtraccionesVisitadas.setCellValueFactory(data -> new SimpleStringProperty(
-                String.valueOf(data.getValue().getAtraccionesVisitadas().size())));
-        colGasto.setCellValueFactory(data -> new SimpleStringProperty(
-                String.format("$%.0f", data.getValue().calcularGastoTotal())));
+        colHistFecha.setCellValueFactory(d -> new SimpleStringProperty(
+                d.getValue().getFechaVisita() != null ? d.getValue().getFechaVisita().toString() : "—"));
+        colHistAtraccion.setCellValueFactory(d -> new SimpleStringProperty(
+                d.getValue().getAtraccionesVisitadas() != null
+                        ? String.valueOf(d.getValue().getAtraccionesVisitadas().size()) + " atracciones"
+                        : "—"));
     }
 
     private void cargarVisitantes() {
         List<Visitante> visitantes = AppContext.getInstance().getParque().getVisitantes();
         listaVisitantes = FXCollections.observableArrayList(visitantes);
-        tablaVisitantes.setItems(listaVisitantes);
+        visitantesTable.setItems(listaVisitantes);
+        actualizarContadores(visitantes);
+    }
+
+    private void actualizarContadores(List<Visitante> visitantes) {
+        long conTicket = visitantes.stream()
+                .filter(v -> v.getTicketActivo() != null).count();
+
+        totalVisitantesLabel.setText(String.valueOf(visitantes.size()));
+        visitantesActivosLabel.setText(String.valueOf(visitantes.size()));
+        visitantesConTicketLabel.setText(String.valueOf(conTicket));
+        resultadosBusquedaLabel.setText(visitantes.size() + " resultado(s)");
     }
 
     private void configurarSeleccion() {
-        tablaVisitantes.getSelectionModel().selectedItemProperty().addListener((obs, anterior, actual) -> {
-            if (actual != null) {
-                mostrarDetalle(actual);
-            } else {
-                limpiarPanelDetalle();
-            }
+        visitantesTable.getSelectionModel().selectedItemProperty().addListener((obs, ant, sel) -> {
+            if (sel != null) mostrarPerfil(sel);
+            else limpiarPerfil();
         });
     }
 
-    private void mostrarDetalle(Visitante visitante) {
-        lblNombreSeleccionado.setText(visitante.getNombre());
-        lblDocumento.setText("Documento: " + visitante.getDocumento());
-        lblEdad.setText("Edad: " + visitante.getEdad() + " años");
-        lblEstatura.setText("Estatura: " + String.format("%.2f m", visitante.getEstatura()));
-        lblSaldo.setText("Saldo virtual: $" + String.format("%.0f", visitante.getSaldoVirtual()));
-        lblTicketActivo.setText("Ticket activo: " +
-                (visitante.getTicketActivo() != null
-                        ? visitante.getTicketActivo().getTipoTicket().name()
-                        : "Ninguno"));
-        lblFavoritas.setText("Atracciones favoritas: " + visitante.getAtraccionesFavoritas().size());
+    private void mostrarPerfil(Visitante v) {
+        sinSeleccionLabel.setVisible(false);
+        sinSeleccionLabel.setManaged(false);
+        perfilBox.setVisible(true);
+        perfilBox.setManaged(true);
 
-        List<HistorialVisita> historial = visitante.getHistorialVisitas();
-        tablaHistorial.setItems(FXCollections.observableArrayList(historial));
+        perfilNombreLabel.setText(v.getNombre());
+        perfilDocumentoLabel.setText(v.getDocumento());
+        perfilEdadLabel.setText(v.getEdad() + " años");
+        perfilAlturaLabel.setText(String.format("%.2f m", v.getEstatura()));
+        perfilSaldoLabel.setText(String.format("$%.0f", v.getSaldoVirtual()));
+        perfilTicketLabel.setText(v.getTicketActivo() != null
+                ? v.getTicketActivo().getTipoTicket().name() : "Ninguno");
+
+        historialTable.setItems(FXCollections.observableArrayList(v.getHistorialVisitas()));
     }
 
-    private void limpiarPanelDetalle() {
-        lblNombreSeleccionado.setText("— Selecciona un visitante —");
-        lblDocumento.setText("");
-        lblEdad.setText("");
-        lblEstatura.setText("");
-        lblSaldo.setText("");
-        lblTicketActivo.setText("");
-        lblFavoritas.setText("");
-        tablaHistorial.setItems(FXCollections.emptyObservableList());
+    private void limpiarPerfil() {
+        sinSeleccionLabel.setVisible(true);
+        sinSeleccionLabel.setManaged(true);
+        perfilBox.setVisible(false);
+        perfilBox.setManaged(false);
+        historialTable.setItems(FXCollections.emptyObservableList());
     }
 
-    @FXML
-    private void onBuscar() {
-        String filtro = txtBuscar.getText().trim().toLowerCase();
-        if (filtro.isEmpty()) {
-            cargarVisitantes();
-            return;
-        }
+    @FXML private void buscarVisitante() {
+        String texto = buscarField.getText().trim().toLowerCase();
+        if (texto.isEmpty()) { cargarVisitantes(); return; }
         List<Visitante> filtrados = AppContext.getInstance().getParque().getVisitantes().stream()
-                .filter(v -> v.getNombre().toLowerCase().contains(filtro)
-                        || v.getDocumento().toLowerCase().contains(filtro))
+                .filter(v -> v.getNombre().toLowerCase().contains(texto)
+                        || v.getDocumento().toLowerCase().contains(texto))
                 .toList();
-        tablaVisitantes.setItems(FXCollections.observableArrayList(filtrados));
-        limpiarPanelDetalle();
+        visitantesTable.setItems(FXCollections.observableArrayList(filtrados));
+        actualizarContadores(filtrados);
+        limpiarPerfil();
     }
 
-    @FXML
-    private void onVolver() {
+    @FXML private void limpiarBusqueda() {
+        buscarField.clear();
+        cargarVisitantes();
+        limpiarPerfil();
+    }
+
+    @FXML private void onVolver() {
         navegarA("/co/edu/uniquindio/techpark420/proyectofinalgestiontechparkuq/views/admin/dashboard-admin.fxml");
     }
 }
