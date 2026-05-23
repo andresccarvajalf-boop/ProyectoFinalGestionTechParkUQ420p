@@ -1,10 +1,11 @@
 package co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapaParque {
+public class MapaParque implements Serializable {
 
     private String id;
     private String nombreMapa;

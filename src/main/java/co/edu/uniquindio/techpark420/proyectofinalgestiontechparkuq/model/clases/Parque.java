@@ -1,5 +1,6 @@
 package co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +8,7 @@ import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.abstra
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.abstractas.Ticket;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.interfaces.Gestionable;
 
-public class Parque implements Gestionable {
+public class Parque implements Gestionable, Serializable {
 
     private String nombre;
     private int capacidadMaxima;
@@ -20,7 +21,7 @@ public class Parque implements Gestionable {
     private List<AlertaClimatica> alertasClimaticas;
     private List<Reporte> reportes;
 
-    // Constructor vacío
+
     public Parque() {
         this.zonas = new ArrayList<>();
         this.empleados = new ArrayList<>();
@@ -30,7 +31,7 @@ public class Parque implements Gestionable {
         this.reportes = new ArrayList<>();
     }
 
-    // Constructor con parámetros
+
     public Parque(String nombre, int capacidadMaxima) {
         this();
         this.nombre = nombre;
@@ -38,9 +39,9 @@ public class Parque implements Gestionable {
         this.visitantesActuales = 0;
     }
 
-    // =========================
-    // GETTERS Y SETTERS
-    // =========================
+
+
+
 
     public String getNombre() {
         return nombre;
@@ -90,9 +91,9 @@ public class Parque implements Gestionable {
         return reportes;
     }
 
-    // =========================
-    // MÉTODOS DEL PARQUE
-    // =========================
+
+
+
 
     public void agregarZona(Zona zona) {
         if (zona != null) {
@@ -164,17 +165,25 @@ public class Parque implements Gestionable {
         return reporte;
     }
 
-    public double calcularIngresosDiarios() {
+public double calcularIngresosDiarios() {
+    double ingresos = 0;
 
-        double ingresos = 0;
 
-        for (Ticket ticket : ticketsVendidos) {
-            ingresos += ticket.getPrecio();
-        }
-
-        return ingresos;
+    for (Ticket ticket : ticketsVendidos) {
+        ingresos += ticket.getPrecio();
     }
 
+
+    for (Visitante visitante : visitantes) {
+        for (HistorialVisita historial : visitante.getHistorialVisitas()) {
+            for (Atraccion atraccion : historial.getAtraccionesVisitadas()) {
+                ingresos += atraccion.getCostoAdicional();
+            }
+        }
+    }
+
+    return ingresos;
+}
     public Zona buscarZona(String nombre) {
 
         for (Zona zona : zonas) {
@@ -201,9 +210,9 @@ public class Parque implements Gestionable {
         return null;
     }
 
-    // =========================
-    // IMPLEMENTACIÓN INTERFAZ
-    // =========================
+
+
+
 
     @Override
     public void crear() {
@@ -237,9 +246,9 @@ public class Parque implements Gestionable {
         return elementos;
     }
 
-    // =========================
-    // TO STRING
-    // =========================
+
+
+
 
     @Override
     public String toString() {

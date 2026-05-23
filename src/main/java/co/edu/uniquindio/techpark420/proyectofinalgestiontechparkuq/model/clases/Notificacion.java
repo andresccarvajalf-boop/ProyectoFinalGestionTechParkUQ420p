@@ -1,9 +1,9 @@
 package co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class Notificacion {
-
+public class Notificacion implements Serializable {
     private String id;
     private String titulo;
     private String mensaje;

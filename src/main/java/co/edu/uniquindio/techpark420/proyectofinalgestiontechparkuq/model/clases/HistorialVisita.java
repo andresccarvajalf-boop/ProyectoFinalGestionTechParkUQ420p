@@ -1,13 +1,13 @@
 package co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.abstractas.Ticket;
 
-public class HistorialVisita {
-
+public class HistorialVisita implements Serializable {
     private String id;
     private LocalDate fechaVisita;
     private Visitante visitante;

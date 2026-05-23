@@ -1,13 +1,13 @@
 package co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.abstractas.Empleado;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.enums.EstadoAtraccion;
 
-public class Operador extends Empleado {
-
+public class Operador extends Empleado implements Serializable {
     private String codigoEmpleado;
     private Zona zonaAsignada;
     private List<Atraccion> atraccionesResponsables;
