@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.operador.GestionAtraccionOperadorController"
+            styleClass="root-pane"
+            stylesheets="@../../styles/main.css">
+
+    <top>
+        <HBox styleClass="top-bar" alignment="CENTER_LEFT" spacing="12">
+            <padding>
+                <Insets top="12" right="24" bottom="12" left="24"/>
+            </padding>
+            <Button text="← Volver" onAction="#onVolver" styleClass="ghost-button"/>
+            <Label fx:id="nombreAtraccionLabel" styleClass="page-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Estado actual:" styleClass="field-label"/>
+            <Label fx:id="estadoActualLabel" styleClass="estado-badge"/>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="24">
+            <padding>
+                <Insets top="24" right="24" bottom="24" left="24"/>
+            </padding>
+
+            <HBox spacing="16">
+
+                <VBox styleClass="card" spacing="16" HBox.hgrow="ALWAYS">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                    <Label text="Cambiar Estado" styleClass="section-title"/>
+                    <VBox spacing="8">
+                        <Label text="Nuevo estado" styleClass="field-label"/>
+                        <ChoiceBox fx:id="nuevoEstadoChoice" maxWidth="Infinity" styleClass="choice-box"/>
+                    </VBox>
+                    <Label fx:id="errorEstadoLabel" styleClass="error-label" visible="false" managed="false" wrapText="true"/>
+                    <Button text="Aplicar cambio de estado" onAction="#handleCambiarEstado"
+                            maxWidth="Infinity" styleClass="primary-button"/>
+                </VBox>
+
+                <VBox styleClass="card" spacing="16" HBox.hgrow="ALWAYS">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                    <Label text="Validar Ingreso de Visitante" styleClass="section-title"/>
+                    <VBox spacing="8">
+                        <Label text="Documento del visitante" styleClass="field-label"/>
+                        <TextField fx:id="documentoVisitanteField" promptText="Ingresa el documento" styleClass="text-field"/>
+                    </VBox>
+                    <Label fx:id="resultadoValidacionLabel" styleClass="info-text" visible="false" managed="false" wrapText="true"/>
+                    <Button text="Validar Ingreso" onAction="#handleValidarIngreso"
+                            maxWidth="Infinity" styleClass="primary-button"/>
+                </VBox>
+
+                <VBox styleClass="card" spacing="16">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                    <Label text="Mantenimiento" styleClass="section-title"/>
+                    <VBox spacing="4">
+                        <Label text="Revisiones registradas" styleClass="field-label"/>
+                        <Label fx:id="totalRevisionesLabel" styleClass="card-value"/>
+                    </VBox>
+                    <Separator/>
+                    <Button fx:id="registrarRevisionButton" text="Registrar Revisión Técnica"
+                            onAction="#handleRegistrarRevision" maxWidth="Infinity" styleClass="secondary-button"/>
+                </VBox>
+            </HBox>
+
+            <VBox spacing="8" VBox.vgrow="ALWAYS">
+                <Label text="Historial de Revisiones Técnicas" styleClass="section-title"/>
+                <TableView fx:id="revisionesTable" VBox.vgrow="ALWAYS" styleClass="table-view">
+                    <columns>
+                        <TableColumn fx:id="colFechaRevision" text="Fecha" prefWidth="160"/>
+                        <TableColumn fx:id="colOperadorRevision" text="Operador" prefWidth="180"/>
+                        <TableColumn fx:id="colDescripcion" text="Descripción" prefWidth="300"/>
+                        <TableColumn fx:id="colResultado" text="Resultado" prefWidth="140"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>

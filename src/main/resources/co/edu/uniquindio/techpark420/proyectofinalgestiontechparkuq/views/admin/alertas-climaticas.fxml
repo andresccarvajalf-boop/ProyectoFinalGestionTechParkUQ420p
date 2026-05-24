@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.admin.AlertasClimaticasController"
+            styleClass="root-pane"
+            stylesheets="@../../styles/main.css">
+
+    <top>
+        <HBox styleClass="top-bar" alignment="CENTER_LEFT" spacing="12">
+            <padding>
+                <Insets top="12" right="24" bottom="12" left="24"/>
+            </padding>
+            <Button text="← Volver" onAction="#onVolver" styleClass="ghost-button"/>
+            <Label text="Alertas Climáticas" styleClass="page-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="alertasActivasLabel" styleClass="estado-badge"/>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="16">
+            <padding>
+                <Insets top="24" right="24" bottom="24" left="24"/>
+            </padding>
+
+            <HBox spacing="16">
+                <VBox styleClass="card" spacing="8" HBox.hgrow="ALWAYS">
+                    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+                    <Label text="Alertas activas" styleClass="card-title"/>
+                    <Label fx:id="contadorActivasLabel" styleClass="card-value"/>
+                </VBox>
+                <VBox styleClass="card" spacing="8" HBox.hgrow="ALWAYS">
+                    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+                    <Label text="Atracciones cerradas por clima" styleClass="card-title"/>
+                    <Label fx:id="atraccionesCerradasLabel" styleClass="card-value"/>
+                </VBox>
+                <VBox styleClass="card" spacing="8" HBox.hgrow="ALWAYS">
+                    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+                    <Label text="Alertas históricas" styleClass="card-title"/>
+                    <Label fx:id="totalHistoricasLabel" styleClass="card-value"/>
+                </VBox>
+                <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
+                    <Button text="+ Activar Nueva Alerta" onAction="#handleActivarAlerta"
+                            maxWidth="Infinity" styleClass="primary-button"/>
+                </VBox>
+            </HBox>
+
+            <SplitPane fx:id="splitPane" dividerPositions="0.45" VBox.vgrow="ALWAYS">
+
+                <VBox spacing="8">
+                    <padding><Insets top="0" right="8" bottom="0" left="0"/></padding>
+
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label text="Alertas" styleClass="section-title"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="Solo activas" onAction="#filtrarActivas" styleClass="filter-button"/>
+                        <Button text="Todas" onAction="#filtrarTodas" styleClass="filter-button"/>
+                    </HBox>
+
+                    <TableView fx:id="alertasTable" VBox.vgrow="ALWAYS" styleClass="table-view">
+                        <columns>
+                            <TableColumn fx:id="colTipo" text="Tipo" prefWidth="140"/>
+                            <TableColumn fx:id="colDescripcion" text="Descripción" prefWidth="200"/>
+                            <TableColumn fx:id="colFechaInicio" text="Inicio" prefWidth="130"/>
+                            <TableColumn fx:id="colEstadoAlerta" text="Estado" prefWidth="100"/>
+                        </columns>
+                    </TableView>
+
+                    <HBox spacing="12" alignment="CENTER_RIGHT">
+                        <Button fx:id="desactivarAlertaButton" text="Desactivar Alerta"
+                                onAction="#handleDesactivarAlerta"
+                                styleClass="danger-button" disable="true"/>
+                    </HBox>
+                </VBox>
+
+                <VBox spacing="8">
+                    <padding><Insets top="0" right="0" bottom="0" left="8"/></padding>
+
+                    <Label text="Atracciones afectadas" styleClass="section-title"/>
+                    <Label fx:id="sinAlertaLabel" text="Selecciona una alerta para ver las atracciones afectadas."
+                           styleClass="info-text" wrapText="true" visible="true" managed="true"/>
+
+                    <ListView fx:id="atraccionesAfectadasList" VBox.vgrow="ALWAYS"
+                              styleClass="list-view" visible="false" managed="false"/>
+
+                    <VBox fx:id="detalleAlertaBox" spacing="8" styleClass="card"
+                          visible="false" managed="false">
+                        <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+                        <Label text="Detalle de la alerta" styleClass="section-title"/>
+                        <HBox spacing="8">
+                            <Label text="Tipo:" styleClass="field-label"/>
+                            <Label fx:id="detalleTipoLabel" styleClass="info-text"/>
+                        </HBox>
+                        <HBox spacing="8">
+                            <Label text="Descripción:" styleClass="field-label"/>
+                            <Label fx:id="detalleDescripcionLabel" styleClass="info-text" wrapText="true"/>
+                        </HBox>
+                        <HBox spacing="8">
+                            <Label text="Fecha inicio:" styleClass="field-label"/>
+                            <Label fx:id="detalleFechaInicioLabel" styleClass="info-text"/>
+                        </HBox>
+                        <HBox spacing="8">
+                            <Label text="Fecha fin:" styleClass="field-label"/>
+                            <Label fx:id="detalleFechaFinLabel" styleClass="info-text"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+
+            </SplitPane>
+        </VBox>
+    </center>
+</BorderPane>
