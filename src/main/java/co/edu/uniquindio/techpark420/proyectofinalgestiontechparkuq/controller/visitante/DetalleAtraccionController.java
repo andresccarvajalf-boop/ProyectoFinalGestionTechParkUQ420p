@@ -1,5 +1,6 @@
 package co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.controller.visitante;
 
+import java.io.File;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -27,6 +28,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -144,7 +147,22 @@ public class DetalleAtraccionController extends BaseController implements Initia
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.initStyle(StageStyle.UNDECORATED);
-        stage.setFullScreen(true);
+        stage.setWidth(600);
+        stage.setHeight(420);
+        stage.centerOnScreen();
+
+        MediaPlayer[] mediaPlayerRef = new MediaPlayer[1];
+        try {
+            File audioFile = new File("audio/aud001.mp3");
+            if (audioFile.exists()) {
+                Media media = new Media(audioFile.toURI().toString());
+                MediaPlayer mp = new MediaPlayer(media);
+                mp.setVolume(0.8);
+                mp.setOnReady(mp::play);
+                mp.setOnError(() -> mediaPlayerRef[0] = null);
+                mediaPlayerRef[0] = mp;
+            }
+        } catch (Exception ignored) {}
 
         java.time.LocalDate hoy = java.time.LocalDate.now();
         co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases.HistorialVisita historialHoy =
@@ -162,7 +180,7 @@ public class DetalleAtraccionController extends BaseController implements Initia
         if (visitante.getTicketActivo() != null) {
             historialHoy.registrarTicket(visitante.getTicketActivo());
         }
-        AppContext.getInstance().guardarDatos(); // ← PERSISTENCIA (historial registrado)
+        AppContext.getInstance().guardarDatos();
 
         StackPane root = new StackPane();
         root.setStyle("-fx-background-color: #1a1a2e;");
@@ -184,7 +202,7 @@ public class DetalleAtraccionController extends BaseController implements Initia
 
         Label lblTurno = new Label("🎉 ¡ES TU TURNO!");
         lblTurno.setStyle("""
-                -fx-font-size: 64px;
+                -fx-font-size: 40px;
                 -fx-font-weight: bold;
                 -fx-text-fill: white;
                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 12, 0.5, 2, 4);
@@ -192,7 +210,7 @@ public class DetalleAtraccionController extends BaseController implements Initia
 
         Label lblAtraccion = new Label(atraccion.getNombre());
         lblAtraccion.setStyle("""
-                -fx-font-size: 36px;
+                -fx-font-size: 24px;
                 -fx-font-weight: bold;
                 -fx-text-fill: #FFD700;
                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 10, 0.4, 1, 3);
@@ -200,7 +218,7 @@ public class DetalleAtraccionController extends BaseController implements Initia
 
         Label lblSub = new Label("Dirígete a la atracción, ¡te están esperando!");
         lblSub.setStyle("""
-                -fx-font-size: 22px;
+                -fx-font-size: 15px;
                 -fx-text-fill: #eeeeee;
                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 8, 0.3, 1, 2);
                 """);
@@ -209,9 +227,9 @@ public class DetalleAtraccionController extends BaseController implements Initia
         btnCerrar.setStyle("""
                 -fx-background-color: #4caf50;
                 -fx-text-fill: white;
-                -fx-font-size: 20px;
+                -fx-font-size: 16px;
                 -fx-font-weight: bold;
-                -fx-padding: 14 48;
+                -fx-padding: 10 36;
                 -fx-background-radius: 30;
                 -fx-cursor: hand;
                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0.3, 0, 3);
@@ -221,6 +239,7 @@ public class DetalleAtraccionController extends BaseController implements Initia
         btnCerrar.setOnMouseExited(e ->
                 btnCerrar.setStyle(btnCerrar.getStyle().replace("#388e3c", "#4caf50")));
         btnCerrar.setOnAction(e -> {
+            detenerAudio(mediaPlayerRef);
             FadeTransition ft = new FadeTransition(Duration.millis(400), stage.getScene().getRoot());
             ft.setFromValue(1.0);
             ft.setToValue(0.0);
@@ -228,9 +247,9 @@ public class DetalleAtraccionController extends BaseController implements Initia
             ft.play();
         });
 
-        VBox contenido = new VBox(24, lblTurno, lblAtraccion, lblSub, btnCerrar);
+        VBox contenido = new VBox(20, lblTurno, lblAtraccion, lblSub, btnCerrar);
         contenido.setAlignment(Pos.CENTER);
-        contenido.setPadding(new Insets(40));
+        contenido.setPadding(new Insets(32));
 
         root.getChildren().addAll(overlay, contenido);
 
@@ -244,11 +263,25 @@ public class DetalleAtraccionController extends BaseController implements Initia
         fadeIn.setToValue(1.0);
         fadeIn.play();
 
-        stage.setOnHidden(e -> Platform.runLater(() -> {
-            btnUnirseACola.setDisable(false);
-            btnUnirseACola.setText("Unirse a la Cola");
-            cargarInfoCola();
-        }));
+        stage.setOnHidden(e -> {
+            detenerAudio(mediaPlayerRef);
+            Platform.runLater(() -> {
+                btnUnirseACola.setDisable(false);
+                btnUnirseACola.setText("Unirse a la Cola");
+                cargarInfoCola();
+            });
+        });
+    }
+
+    private void detenerAudio(MediaPlayer[] ref) {
+        if (ref[0] != null) {
+            MediaPlayer.Status status = ref[0].getStatus();
+            if (status != MediaPlayer.Status.DISPOSED && status != MediaPlayer.Status.UNKNOWN) {
+                ref[0].stop();
+            }
+            ref[0].dispose();
+            ref[0] = null;
+        }
     }
 
     private void evaluarAcceso() {
@@ -339,7 +372,7 @@ public class DetalleAtraccionController extends BaseController implements Initia
             if (atraccion.getCostoAdicional() > 0) {
                 visitante.realizarPago(atraccion.getCostoAdicional());
             }
-            AppContext.getInstance().guardarDatos(); // ← PERSISTENCIA (cola + saldo)
+            AppContext.getInstance().guardarDatos();
             mostrarAlerta("¡Unido a la cola!",
                     "Te has unido a la cola de " + atraccion.getNombre()
                     + ".\nTiempo estimado de espera: " + cola.calcularTiempoEspera() + " min."
@@ -358,12 +391,12 @@ public class DetalleAtraccionController extends BaseController implements Initia
         if (favoritas.contains(atraccion)) {
             visitante.removerFavorita(atraccion);
             btnAgregarFavorita.setText("☆ Agregar a favoritas");
-            AppContext.getInstance().guardarDatos(); // ← PERSISTENCIA
+            AppContext.getInstance().guardarDatos();
             mostrarAlerta("Removida", atraccion.getNombre() + " fue removida de tus favoritas.");
         } else {
             visitante.agregarFavorita(atraccion);
             btnAgregarFavorita.setText("★ En favoritas");
-            AppContext.getInstance().guardarDatos(); // ← PERSISTENCIA
+            AppContext.getInstance().guardarDatos();
             mostrarAlerta("Agregada", atraccion.getNombre() + " fue añadida a tus favoritas.");
         }
     }
