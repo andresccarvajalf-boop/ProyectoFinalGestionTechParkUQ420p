@@ -43,7 +43,7 @@ public class DashboardVisitanteController extends BaseController implements Init
 
     private Visitante visitante;
 
-    // Gradientes de color para cada zona (ciclo)
+
     private static final String[] ZONE_GRADIENTS = {
         "linear-gradient(to bottom right, #e74c3c, #c0392b)",
         "linear-gradient(to bottom right, #3498db, #1a5276)",
@@ -76,7 +76,7 @@ public class DashboardVisitanteController extends BaseController implements Init
         cargarFotoPerfil();
     }
 
-    // ── MAPA VISUAL ──────────────────────────────────────────────────────────
+
 
     private void cargarMapaVisual() {
         mapaFlowPane.getChildren().clear();
@@ -104,7 +104,7 @@ public class DashboardVisitanteController extends BaseController implements Init
             "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.45), 14, 0, 0, 4);"
         );
 
-        // Cabecera coloreada
+
         VBox header = new VBox(4);
         header.setAlignment(Pos.CENTER);
         header.setPadding(new Insets(14, 12, 12, 12));
@@ -126,7 +126,7 @@ public class DashboardVisitanteController extends BaseController implements Init
 
         header.getChildren().addAll(emojiLbl, zonaNombre, statsLbl);
 
-        // Cuerpo: lista de atracciones
+
         VBox body = new VBox(2);
         body.setPadding(new Insets(8, 10, 10, 10));
 
@@ -142,7 +142,7 @@ public class DashboardVisitanteController extends BaseController implements Init
 
         card.getChildren().addAll(header, body);
 
-        // Hover en la tarjeta
+
         String baseStyle = "-fx-background-color: rgba(255,255,255,0.07);" +
             "-fx-background-radius: 14; -fx-border-color: rgba(255,255,255,0.18);" +
             "-fx-border-radius: 14; -fx-border-width: 1;" +
@@ -218,7 +218,7 @@ public class DashboardVisitanteController extends BaseController implements Init
         return ATTRACTION_EMOJIS[Math.abs(nombre.hashCode()) % ATTRACTION_EMOJIS.length];
     }
 
-    // ── FOTO PERFIL ──────────────────────────────────────────────────────────
+
 
     private void cargarFotoPerfil() {
         if (imgPerfil == null) return;
@@ -257,7 +257,7 @@ public class DashboardVisitanteController extends BaseController implements Init
         }
     }
 
-    // ── NAVEGACIÓN ───────────────────────────────────────────────────────────
+
 
     @FXML
     private void irARecargarSaldo() {

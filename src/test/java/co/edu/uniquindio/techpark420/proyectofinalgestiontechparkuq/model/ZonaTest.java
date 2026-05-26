@@ -26,7 +26,7 @@ class ZonaTest {
         zona = new Zona("Z01", "Zona Aventura", 5);
     }
 
-    // Prueba 12 — Zona llena rechaza ingreso de nuevo visitante
+
     @Test
     void registrarIngreso_zonaLlena_retornaFalso() {
         for (int i = 0; i < 5; i++) {
@@ -36,7 +36,7 @@ class ZonaTest {
         assertEquals(5, zona.getVisitantesActuales());
     }
 
-    // Prueba 13 — Solo atracciones ACTIVAS aparecen en la lista
+
     @Test
     void obtenerAtraccionesActivas_mixDeEstados_soloRetornaActivas() {
         Atraccion activa = new Atraccion("A01", "Activa", TipoAtraccion.MECANICA, 10);
