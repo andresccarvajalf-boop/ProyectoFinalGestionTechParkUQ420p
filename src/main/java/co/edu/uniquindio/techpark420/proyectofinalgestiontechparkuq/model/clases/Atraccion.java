@@ -23,7 +23,7 @@ public class Atraccion implements Serializable {
     private ColaVirtual colaVirtual;
     private List<RevisionTecnica> revisionesTecnicas;
     private List<Operador> operadoresResponsables;
-
+    private String rutaImagen;
     public Atraccion() {
         this.estado = EstadoAtraccion.ACTIVA;
         this.revisionesTecnicas = new ArrayList<>();
@@ -237,5 +237,12 @@ public void setRevisionesTecnicas(List<RevisionTecnica> revisionesTecnicas) {
 
 public void setOperadoresResponsables(List<Operador> operadoresResponsables) {
     this.operadoresResponsables = operadoresResponsables;
+}
+public String getRutaImagen() {
+    return rutaImagen;
+}
+
+public void setRutaImagen(String rutaImagen) {
+    this.rutaImagen = rutaImagen;
 }
 }

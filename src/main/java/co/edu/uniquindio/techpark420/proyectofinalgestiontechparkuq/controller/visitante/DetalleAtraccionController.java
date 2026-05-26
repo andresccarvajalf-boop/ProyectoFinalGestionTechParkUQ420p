@@ -372,11 +372,7 @@ public class DetalleAtraccionController extends BaseController implements Initia
             if (atraccion.getCostoAdicional() > 0) {
                 visitante.realizarPago(atraccion.getCostoAdicional());
             }
-            AppContext.getInstance().guardarDatos();
-            mostrarAlerta("¡Unido a la cola!",
-                    "Te has unido a la cola de " + atraccion.getNombre()
-                    + ".\nTiempo estimado de espera: " + cola.calcularTiempoEspera() + " min."
-                    + "\n\nCuando sea tu turno recibirás una notificación.");
+          
             cargarInfoCola();
             btnUnirseACola.setDisable(true);
             btnUnirseACola.setText("⏳ En cola");
