@@ -71,7 +71,9 @@ public class GestionZonasAtraccionesController extends BaseController implements
         configurarSeleccionAtracciones();
     }
 
-    // ── Columnas ──────────────────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────────────────────
+    // COLUMNAS
+    // ─────────────────────────────────────────────────────────────────────────
 
     private void configurarColumnasZonas() {
         colZonaNombre.setCellValueFactory(d ->
@@ -108,7 +110,9 @@ public class GestionZonasAtraccionesController extends BaseController implements
                 new SimpleStringProperty(d.getValue().getEdadMinima() + " años"));
     }
 
-    // ── Carga de datos ────────────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────────────────────
+    // CARGA DE DATOS
+    // ─────────────────────────────────────────────────────────────────────────
 
     private void cargarZonas() {
         if (parque == null) return;
@@ -123,7 +127,9 @@ public class GestionZonasAtraccionesController extends BaseController implements
         atraccionesTable.setItems(listaAtracciones);
     }
 
-    // ── Selección ─────────────────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────────────────────
+    // SELECCIÓN
+    // ─────────────────────────────────────────────────────────────────────────
 
     private void configurarSeleccionZonas() {
         zonasTable.getSelectionModel().selectedItemProperty().addListener((obs, ant, sel) -> {
@@ -145,7 +151,9 @@ public class GestionZonasAtraccionesController extends BaseController implements
         eliminarAtraccionButton.setDisable(true);
     }
 
-    // ── Acciones de Zonas ─────────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────────────────────
+    // ACCIONES — ZONAS
+    // ─────────────────────────────────────────────────────────────────────────
 
     @FXML private void buscarZona() {
         String texto = buscarZonaField.getText().trim().toLowerCase();
@@ -185,7 +193,9 @@ public class GestionZonasAtraccionesController extends BaseController implements
         cargarTodasLasAtracciones();
     }
 
-    // ── Acciones de Atracciones ───────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────────────────────
+    // ACCIONES — ATRACCIONES
+    // ─────────────────────────────────────────────────────────────────────────
 
     @FXML private void buscarAtraccion() {
         String texto = buscarAtraccionField.getText().trim().toLowerCase();
@@ -248,7 +258,9 @@ public class GestionZonasAtraccionesController extends BaseController implements
         navegarA("/co/edu/uniquindio/techpark420/proyectofinalgestiontechparkuq/views/admin/dashboard-admin.fxml");
     }
 
-    // ── Diálogo Zona ──────────────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────────────────────
+    // DIÁLOGO — ZONA
+    // ─────────────────────────────────────────────────────────────────────────
 
     private Optional<Zona> abrirDialogoZona(Zona existente) {
         Dialog<Zona> dialogo = new Dialog<>();
@@ -288,7 +300,9 @@ public class GestionZonasAtraccionesController extends BaseController implements
         return dialogo.showAndWait();
     }
 
-    // ── Diálogo Atracción ─────────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────────────────────
+    // DIÁLOGO — ATRACCIÓN
+    // ─────────────────────────────────────────────────────────────────────────
 
     private Optional<Object[]> abrirDialogoAtraccion(Atraccion existente, Zona zonaActual) {
         Dialog<Object[]> dialogo = new Dialog<>();
@@ -297,7 +311,7 @@ public class GestionZonasAtraccionesController extends BaseController implements
         ButtonType btnCancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialogo.getDialogPane().getButtonTypes().addAll(btnGuardar, btnCancelar);
 
-        // ── Campos básicos ──────────────────────────────────────────────
+        // Campos básicos
         TextField tfNombre    = new TextField(existente != null ? existente.getNombre() : "");
         TextField tfCapacidad = new TextField(existente != null
                 ? String.valueOf(existente.getCapacidadMaxima()) : "");
@@ -314,23 +328,22 @@ public class GestionZonasAtraccionesController extends BaseController implements
         tfEdad.setPromptText("Ej: 7");
         tfCosto.setPromptText("Ej: 5000");
 
-        // ── Tipo de atracción ───────────────────────────────────────────
+        // Tipo de atracción
         ChoiceBox<TipoAtraccion> choiceTipo =
                 new ChoiceBox<>(FXCollections.observableArrayList(TipoAtraccion.values()));
         choiceTipo.setValue(existente != null
                 ? existente.getTipoAtraccion() : TipoAtraccion.values()[0]);
 
-        // ── Zona ────────────────────────────────────────────────────────
+        // Zona
         ChoiceBox<Zona> choiceZona =
                 new ChoiceBox<>(FXCollections.observableArrayList(parque.getZonas()));
         choiceZona.setValue(zonaActual != null ? zonaActual : parque.getZonas().get(0));
         choiceZona.setConverter(new javafx.util.StringConverter<Zona>() {
-            @Override public String toString(Zona z)       { return z != null ? z.getNombre() : ""; }
-            @Override public Zona fromString(String s)     { return null; }
+            @Override public String toString(Zona z)   { return z != null ? z.getNombre() : ""; }
+            @Override public Zona fromString(String s) { return null; }
         });
 
-        // ── Cola Virtual ────────────────────────────────────────────────
-        // Determinar estado actual de la cola si se está editando
+        // Cola virtual
         boolean tieneColaActiva = existente != null
                 && existente.getColaVirtual() != null
                 && existente.getColaVirtual().isActiva();
@@ -339,7 +352,6 @@ public class GestionZonasAtraccionesController extends BaseController implements
                 FXCollections.observableArrayList("Sí, activar cola", "No, sin cola"));
         choiceCola.setValue(tieneColaActiva ? "Sí, activar cola" : "No, sin cola");
 
-        // Capacidad de la cola (solo relevante si se activa)
         TextField tfCapCola = new TextField(
                 (existente != null && existente.getColaVirtual() != null)
                         ? String.valueOf(existente.getColaVirtual().getCapacidadMaxima())
@@ -347,12 +359,11 @@ public class GestionZonasAtraccionesController extends BaseController implements
         tfCapCola.setPromptText("Capacidad de la cola");
         tfCapCola.setDisable(!tieneColaActiva);
 
-        // Habilitar/deshabilitar campo de capacidad según selección
         choiceCola.getSelectionModel().selectedItemProperty().addListener((obs, old, nuevo) ->
                 tfCapCola.setDisable(!"Sí, activar cola".equals(nuevo))
         );
 
-        // ── Grid ────────────────────────────────────────────────────────
+        // Layout
         GridPane grid = new GridPane();
         grid.setHgap(10); grid.setVgap(10);
         grid.setPadding(new Insets(16));
@@ -367,14 +378,13 @@ public class GestionZonasAtraccionesController extends BaseController implements
         grid.add(new Label("Edad mínima (años):"),  0, fila); grid.add(tfEdad,      1, fila++);
         grid.add(new Label("Costo adicional ($):"), 0, fila); grid.add(tfCosto,     1, fila++);
 
-        // Separador visual antes de la sección de cola
         grid.add(new Label("── Cola Virtual ──────────────"), 0, fila, 2, 1); fila++;
-        grid.add(new Label("¿Activar cola virtual?"),         0, fila); grid.add(choiceCola,  1, fila++);
-        grid.add(new Label("Capacidad de la cola:"),          0, fila); grid.add(tfCapCola,   1, fila++);
+        grid.add(new Label("¿Activar cola virtual?"),         0, fila); grid.add(choiceCola, 1, fila++);
+        grid.add(new Label("Capacidad de la cola:"),          0, fila); grid.add(tfCapCola,  1, fila++);
 
         dialogo.getDialogPane().setContent(grid);
 
-        // ── Resultado ───────────────────────────────────────────────────
+        // Resultado
         dialogo.setResultConverter(boton -> {
             if (boton != btnGuardar) return null;
             try {
@@ -388,7 +398,6 @@ public class GestionZonasAtraccionesController extends BaseController implements
 
                 if (nombre.isEmpty() || zona == null) return null;
 
-                // Crear o reusar la atracción
                 Atraccion a = existente != null
                         ? existente
                         : new Atraccion(UUID.randomUUID().toString(), nombre, tipo, cap);
@@ -402,24 +411,22 @@ public class GestionZonasAtraccionesController extends BaseController implements
                 a.setEdadMinima(edad);
                 a.setCostoAdicional(costo);
 
-                // ── Asignar / actualizar cola virtual ──────────────────
+                // ── Cola virtual ──────────────────────────────────────────────
                 boolean activarCola = "Sí, activar cola".equals(choiceCola.getValue());
                 if (activarCola) {
-                    int capCola = 50; // valor por defecto
+                    // ✅ CORRECCIÓN: declarar capCola como variable local con valor por defecto
+                    int capCola = 50;
                     try { capCola = Integer.parseInt(tfCapCola.getText().trim()); }
                     catch (NumberFormatException ignored) {}
 
                     if (a.getColaVirtual() == null) {
-                        // Crear nueva cola
                         ColaVirtual cola = new ColaVirtual(
                                 UUID.randomUUID().toString(), capCola, a);
                         a.setColaVirtual(cola);
                     } else {
-                        // Cola existente: solo asegurarse de que esté activa
                         a.getColaVirtual().abrirCola();
                     }
                 } else {
-                    // El admin decidió no tener cola
                     if (a.getColaVirtual() != null) {
                         a.getColaVirtual().cerrarCola();
                     } else {
@@ -437,7 +444,9 @@ public class GestionZonasAtraccionesController extends BaseController implements
         return dialogo.showAndWait();
     }
 
-    // ── Utilidades ────────────────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────────────────────
+    // UTILIDADES
+    // ─────────────────────────────────────────────────────────────────────────
 
     private boolean confirmar(String titulo, String mensaje) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);

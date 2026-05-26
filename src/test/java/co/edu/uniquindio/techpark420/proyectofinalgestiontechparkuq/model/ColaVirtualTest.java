@@ -27,7 +27,7 @@ class ColaVirtualTest {
         return new Visitante(id, "Visitante " + id, "DOC" + id, 20, 1.60);
     }
 
-    // Prueba 14 — FastPass tiene prioridad sobre visitante en cola normal
+
     @Test
     void obtenerSiguienteVisitante_conFastPassYNormal_priorizaFastPass() {
         Visitante normal = crearVisitante("VN1");
@@ -39,7 +39,7 @@ class ColaVirtualTest {
         assertEquals(fastPass, cola.obtenerSiguienteVisitante());
     }
 
-    // Prueba 15 — Tiempo de espera es proporcional a personas en cola (5 min por persona)
+
     @Test
     void calcularTiempoEspera_dosPersonas_retorna10Minutos() {
         cola.agregarVisitante(crearVisitante("VN2"));

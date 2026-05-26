@@ -1,7 +1,8 @@
 module co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq {
 
-    requires javafx.controls;
-    requires javafx.fxml;
+    requires transitive javafx.controls;
+    requires transitive javafx.fxml;
+    requires javafx.media;
 
     opens co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq
         to javafx.fxml;
