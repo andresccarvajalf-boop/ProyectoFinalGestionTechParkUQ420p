@@ -46,7 +46,7 @@
                 <VBox styleClass="card" spacing="8" HBox.hgrow="ALWAYS">
                     <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
                     <Label text="Abiertas ahora" styleClass="card-title"/>
-                    <Label fx:id="abieratasLabel" styleClass="card-value"/>
+                    <Label fx:id="abiertasLabel" styleClass="card-value"/>
                 </VBox>
                 <VBox styleClass="card" spacing="8" HBox.hgrow="ALWAYS">
                     <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
