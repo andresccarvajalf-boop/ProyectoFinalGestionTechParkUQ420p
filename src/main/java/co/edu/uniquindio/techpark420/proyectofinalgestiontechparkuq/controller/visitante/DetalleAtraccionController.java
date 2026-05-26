@@ -157,7 +157,7 @@ public class DetalleAtraccionController extends BaseController implements Initia
             if (audioFile.exists()) {
                 Media media = new Media(audioFile.toURI().toString());
                 MediaPlayer mp = new MediaPlayer(media);
-                mp.setVolume(0.8);
+                mp.setVolume(0.5);
                 mp.setOnReady(mp::play);
                 mp.setOnError(() -> mediaPlayerRef[0] = null);
                 mediaPlayerRef[0] = mp;
