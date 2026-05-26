@@ -13,10 +13,7 @@ import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.enums.EstadoAtraccion;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.enums.TipoAtraccion;
 
-/**
- * Pruebas unitarias para la clase Zona.
- * Autores: [Nombres de los integrantes del grupo]
- */
+
 class ZonaTest {
 
     private Zona zona;
