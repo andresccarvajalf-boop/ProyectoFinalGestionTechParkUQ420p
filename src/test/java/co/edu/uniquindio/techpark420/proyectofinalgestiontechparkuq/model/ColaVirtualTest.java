@@ -9,10 +9,7 @@ import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases.Visitante;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.enums.TipoAtraccion;
 
-/**
- * Pruebas unitarias para la clase ColaVirtual.
- * Autores: [Nombres de los integrantes del grupo]
- */
+    
 class ColaVirtualTest {
 
     private ColaVirtual cola;

@@ -1,21 +1,21 @@
 package co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model;
 
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases.AlertaClimatica;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases.Atraccion;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases.RevisionTecnica;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases.Visitante;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.enums.EstadoAtraccion;
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.enums.TipoAtraccion;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Pruebas unitarias para la clase Atraccion.
- * Autores: [Nombres de los integrantes del grupo]
- */
 class AtraccionTest {
 
     private Atraccion atraccion;

@@ -7,10 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import co.edu.uniquindio.techpark420.proyectofinalgestiontechparkuq.model.clases.Visitante;
 
-/**
- * Pruebas unitarias para la clase Visitante.
- * Autores: [Nombres de los integrantes del grupo]
- */
 class VisitanteTest {
 
     private Visitante visitante;
